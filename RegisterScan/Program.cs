@@ -29,21 +29,21 @@ namespace devMobile.IoT.SX127x.RegisterScan
    using nanoFramework.Hardware.Esp32;
 #endif
 
-   public sealed class SX127xDevice
+   public sealed class SX127XDevice
    {
-      private readonly SpiDevice sx127xLoraModem;
+      private readonly SpiDevice SX127XTransceiver;
 
-      public SX127xDevice(int spiPort, int chipSelectPin)
+      public SX127XDevice(int busId, int chipSelectLine)
       {
 
-         var settings = new SpiConnectionSettings(spiPort, chipSelectPin)
+         var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
             ClockFrequency = 500000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
             SharingMode = SpiSharingMode.Shared
          };
 
-         sx127xLoraModem = new SpiDevice(settings);
+         SX127XTransceiver = new SpiDevice(settings);
       }
 
       public Byte RegisterReadByte(byte registerAddress)
@@ -51,7 +51,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
          byte[] writeBuffer = new byte[] { registerAddress, 0x0 };
          byte[] readBuffer = new byte[writeBuffer.Length];
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
          return readBuffer[1];
       }
@@ -95,7 +95,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO13, DeviceFunction.SPI1_MOSI);
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 #endif
-            SX127xDevice sx127x = new SX127xDevice(SpiBusId, chipSelectPinNumber);
+            SX127XDevice sx127xDevice = new SX127XDevice(SpiBusId, chipSelectPinNumber);
 
             Thread.Sleep(500);
 
@@ -103,7 +103,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
             {
                for (byte registerIndex = 0; registerIndex <= 0x42; registerIndex++)
                {
-                  byte registerValue = sx127x.RegisterReadByte(registerIndex);
+                  byte registerValue = sx127xDevice.RegisterReadByte(registerIndex);
 
                   Debug.WriteLine($"Register 0x{registerIndex:x2} - Value 0X{registerValue:x2}");
                }
@@ -118,7 +118,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
          }
       }
 
-#if ST_STM32F429I_DISCOVERY ||NETDUINO3_WIFI || ST_NUCLEO144_F746ZG
+#if ST_STM32F769I_DISCOVERY ||NETDUINO3_WIFI 
       static int PinNumber(char port, byte pin)
       {
          if (port < 'A' || port > 'J')
