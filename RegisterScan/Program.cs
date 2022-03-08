@@ -95,7 +95,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO13, DeviceFunction.SPI1_MOSI);
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 #endif
-            SX127xDevice rfm9XDevice = new SX127xDevice(SpiBusId, chipSelectPinNumber);
+            SX127xDevice sx127x = new SX127xDevice(SpiBusId, chipSelectPinNumber);
 
             Thread.Sleep(500);
 
@@ -103,7 +103,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
             {
                for (byte registerIndex = 0; registerIndex <= 0x42; registerIndex++)
                {
-                  byte registerValue = rfm9XDevice.RegisterReadByte(registerIndex);
+                  byte registerValue = sx127x.RegisterReadByte(registerIndex);
 
                   Debug.WriteLine($"Register 0x{registerIndex:x2} - Value 0X{registerValue:x2}");
                }

@@ -181,7 +181,7 @@ namespace devMobile.IoT.SX127x.RegisterReadAndWrite
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO13, DeviceFunction.SPI1_MOSI);
             Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 
-            Rfm9XDevice sx127xDevice = new Rfm9XDevice(SpiBusId, chipSelectPinNumber);
+            SX127xDevice sx127xDevice = new SX127xDevice(SpiBusId, chipSelectPinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
             SX127xDevice sx127xDevice = new SX127xDevice(SpiBusId, chipSelectPinNumber, resetPinNumber);
