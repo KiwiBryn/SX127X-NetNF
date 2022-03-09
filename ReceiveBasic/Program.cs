@@ -12,7 +12,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
+//
 //---------------------------------------------------------------------------------
 #define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 //#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
@@ -65,7 +65,7 @@ namespace devMobile.IoT.SX127x.ReceiveBasic
       {
          var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
-            ClockFrequency = 500000,
+            ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
             SharingMode = SpiSharingMode.Shared,
          };

@@ -9,9 +9,9 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "01.RegisterScan", "Register
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "02.RegisterReadAndWrite", "RegisterReadAndWrite\02.RegisterReadAndWrite.nfproj", "{D46E537B-87BE-4983-8C5F-A0DF4C043A08}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveBasic", "ReceiveBasic\ReceiveBasic.nfproj", "{08E7021F-8766-40C5-97F8-73F3E0A961FB}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "03.ReceiveBasic", "ReceiveBasic\03.ReceiveBasic.nfproj", "{08E7021F-8766-40C5-97F8-73F3E0A961FB}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TransmitBasic", "TransmitBasic\TransmitBasic.nfproj", "{6A7D0503-0DDC-477F-8EBF-73ACF6086EEC}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "04.TransmitBasic", "TransmitBasic\04.TransmitBasic.nfproj", "{6A7D0503-0DDC-477F-8EBF-73ACF6086EEC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

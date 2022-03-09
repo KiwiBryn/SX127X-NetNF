@@ -65,7 +65,7 @@ namespace devMobile.IoT.SX127x.TransmitBasic
       {
          var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
-            ClockFrequency = 500000,
+            ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
             SharingMode = SpiSharingMode.Shared,
          };
