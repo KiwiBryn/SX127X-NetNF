@@ -30,66 +30,79 @@ namespace devMobile.IoT.SX127x.RegisterReadAndWrite
    using nanoFramework.Hardware.Esp32;
 #endif
 
-   public sealed class SX127xDevice
+   public sealed class SX127XDevice
    {
-      private readonly SpiDevice sx127xLoraModem;
+      private const byte RegisterAddressMinimum = 0X0;
+      private const byte RegisterAddressMaximum = 0x42;
       private const byte RegisterAddressReadMask = 0X7f;
       private const byte RegisterAddressWriteMask = 0x80;
 
-      public SX127xDevice(int spiBusId, int chipSelectPin, int resetPin)
+      private readonly SpiDevice SX127XTransceiver;
+
+      public SX127XDevice(int busId, int chipSelectLine, int resetPin)
       {
-         var settings = new SpiConnectionSettings(spiBusId, chipSelectPin)
+         var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
             ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
             SharingMode = SpiSharingMode.Shared
          };
 
-         sx127xLoraModem = new SpiDevice(settings);
+         SX127XTransceiver = new SpiDevice(settings);
 
          // Factory reset pin configuration
          GpioController gpioController = new GpioController();
          gpioController.OpenPin(resetPin, PinMode.Output);
 
          gpioController.Write(resetPin, PinValue.Low);
-         Thread.Sleep(10);
+         Thread.Sleep(20);
          gpioController.Write(resetPin, PinValue.High);
-         Thread.Sleep(10);
+         Thread.Sleep(20);
       }
 
-      public SX127xDevice(int spiBusId, int chipSelectPin)
+      public SX127XDevice(int busId, int chipSelectLine)
       {
-         var settings = new SpiConnectionSettings(spiBusId, chipSelectPin)
+         var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
             ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
             SharingMode = SpiSharingMode.Shared,
          };
 
-         sx127xLoraModem = new SpiDevice(settings);
+         SX127XTransceiver = new SpiDevice(settings);
       }
 
-      public Byte RegisterReadByte(byte registerAddress)
+      public Byte ReadByte(byte registerAddress)
       {
          byte[] writeBuffer = new byte[] { registerAddress &= RegisterAddressReadMask, 0x0 };
          byte[] readBuffer = new byte[writeBuffer.Length];
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
          return readBuffer[1];
       }
 
-      public ushort RegisterReadWord(byte address)
+      public ushort ReadWord(byte address)
       {
          byte[] writeBuffer = new byte[] { address &= RegisterAddressReadMask, 0x0, 0x0 };
          byte[] readBuffer = new byte[writeBuffer.Length];
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
          return (ushort)(readBuffer[2] + (readBuffer[1] << 8));
       }
 
-      public byte[] RegisterRead(byte address, int length)
+      public ushort ReadWordMsbLsb(byte address)
+      {
+         byte[] writeBuffer = new byte[] { address &= RegisterAddressReadMask, 0x0, 0x0 };
+         byte[] readBuffer = new byte[writeBuffer.Length];
+
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+
+         return (ushort)((readBuffer[1] << 8) + readBuffer[2]);
+      }
+
+      public byte[] ReadBytes(byte address, byte length)
       {
          byte[] writeBuffer = new byte[length + 1];
          byte[] readBuffer = new byte[writeBuffer.Length];
@@ -97,31 +110,40 @@ namespace devMobile.IoT.SX127x.RegisterReadAndWrite
 
          writeBuffer[0] = address &= RegisterAddressReadMask;
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
          Array.Copy(readBuffer, 1, replyBuffer, 0, length);
 
          return replyBuffer;
       }
 
-      public void RegisterWriteByte(byte address, byte value)
+      public void WriteByte(byte address, byte value)
       {
          byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, value };
          byte[] readBuffer = new byte[writeBuffer.Length];
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
       }
 
-      public void RegisterWriteWord(byte address, ushort value)
+      public void WriteWord(byte address, ushort value)
       {
          byte[] valueBytes = BitConverter.GetBytes(value);
          byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, valueBytes[0], valueBytes[1] };
          byte[] readBuffer = new byte[writeBuffer.Length];
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
       }
 
-      public void RegisterWrite(byte address, byte[] bytes)
+      public void WriteWordMsbLsb(byte address, ushort value)
+      {
+         byte[] valueBytes = BitConverter.GetBytes(value);
+         byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, valueBytes[1], valueBytes[0] };
+         byte[] readBuffer = new byte[writeBuffer.Length];
+
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+      }
+
+      public void WriteBytes(byte address, byte[] bytes)
       {
          byte[] writeBuffer = new byte[1 + bytes.Length];
          byte[] readBuffer = new byte[writeBuffer.Length];
@@ -129,96 +151,107 @@ namespace devMobile.IoT.SX127x.RegisterReadAndWrite
          Array.Copy(bytes, 0, writeBuffer, 1, bytes.Length);
          writeBuffer[0] = address |= RegisterAddressWriteMask;
 
-         sx127xLoraModem.TransferFullDuplex(writeBuffer, readBuffer);
+         SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
       }
 
       public void RegisterDump()
       {
          Debug.WriteLine("Register dump");
-         for (byte registerIndex = 0; registerIndex <= 0x42; registerIndex++)
+         for (byte registerIndex = RegisterAddressMinimum; registerIndex <= RegisterAddressMaximum; registerIndex++)
          {
-            byte registerValue = this.RegisterReadByte(registerIndex);
+            byte registerValue = this.ReadByte(registerIndex);
 
             Debug.WriteLine($"Register 0x{registerIndex:x2} - Value 0X{registerValue:x2}");
          }
+
+         Debug.WriteLine("");
       }
    }
 
-   class Program
+   public class Program
    {
-#if NETDUINO3_WIFI
-      private const int SpiBusId = 2;
-#endif
 #if ESP32_WROOM_32_LORA_1_CHANNEL
       private const int SpiBusId = 1;
+#endif
+#if NETDUINO3_WIFI
+      private const int SpiBusId = 2;
 #endif
 #if ST_STM32F769I_DISCOVERY
       private const int SpiBusId = 2;
 #endif
 
-      static void Main()
+
+      public static void Main()
       {
-#if ESP32_WROOM_32_LORA_1_CHANNEL
-         int chipSelectPinNumber = Gpio.IO16;
+         byte[] frequencyBytes;
+#if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
+         int chipSelectLine = Gpio.IO16;
 #endif
 #if NETDUINO3_WIFI
-         int chipSelectPinNumber = PinNumber('B', 10);
+         // Arduino D10->PB10
+         int chipSelectLine = PinNumber('B', 10);
+         // Arduino D9->PE5
          int resetPinNumber = PinNumber('E', 5);
 #endif
 #if ST_STM32F769I_DISCOVERY
          // Arduino D10->PA11
-         int chipSelectPinNumber = PinNumber('A', 11);
+         int chipSelectLine = PinNumber('A', 11);
          // Arduino D9->PH6
          int resetPinNumber = PinNumber('H', 6);
 #endif
 
-         Debug.WriteLine("devMobile.IoT.SX127x.RegisterReadAndWrite");
+         Debug.WriteLine("devMobile.IoT.SX127x.RegisterReadAndWrite starting");
 
          try
          {
 #if ESP32_WROOM_32_LORA_1_CHANNEL
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO12, DeviceFunction.SPI1_MISO);
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO13, DeviceFunction.SPI1_MOSI);
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+            Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
+            Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
+            Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 
-            SX127xDevice sx127xDevice = new SX127xDevice(SpiBusId, chipSelectPinNumber);
+            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-            SX127xDevice sx127xDevice = new SX127xDevice(SpiBusId, chipSelectPinNumber, resetPinNumber);
+            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, resetPinNumber);
 #endif
             Thread.Sleep(500);
 
-            sx127xDevice.RegisterDump();
+            sx127XDevice.RegisterDump();
 
             while (true)
             {
                Debug.WriteLine("Read RegOpMode (read byte)");
-               Byte regOpMode1 = sx127xDevice.RegisterReadByte(0x1);
+               Byte regOpMode1 = sx127XDevice.ReadByte(0x1);
                Debug.WriteLine($"RegOpMode 0x{regOpMode1:x2}");
 
                Debug.WriteLine("Set LoRa mode and sleep mode (write byte)");
-               sx127xDevice.RegisterWriteByte(0x01, 0b10000000);
+               sx127XDevice.WriteByte(0x01, 0b10000000);
 
                Debug.WriteLine("Read RegOpMode (read byte)");
-               Byte regOpMode2 = sx127xDevice.RegisterReadByte(0x1);
+               Byte regOpMode2 = sx127XDevice.ReadByte(0x1);
                Debug.WriteLine($"RegOpMode 0x{regOpMode2:x2}");
 
                Debug.WriteLine("Read the preamble (read word)");
-               ushort preamble = sx127xDevice.RegisterReadWord(0x20);
+               ushort preamble = sx127XDevice.ReadWord(0x20);
                Debug.WriteLine($"Preamble 0x{preamble:x2}");
 
-               Debug.WriteLine("Set the preamble to 0x80 (write word)");
-               sx127xDevice.RegisterWriteWord(0x20, 0x80);
+	            Console.WriteLine("Read the preamble (read word)"); // Should be 0x08
+			      preamble = sx127XDevice.ReadWordMsbLsb(0x20);
+               Debug.WriteLine($"Preamble 0x{preamble:x2}");
 
-               Debug.WriteLine("Read the center frequency (read byte array)");
-               byte[] frequencyReadBytes = sx127xDevice.RegisterRead(0x06, 3);
-               Debug.WriteLine($"Frequency Msb 0x{frequencyReadBytes[0]:x2} Mid 0x{frequencyReadBytes[1]:x2} Lsb 0x{frequencyReadBytes[2]:x2}");
+               Debug.WriteLine("Read the centre frequency (read byte array)");
+               frequencyBytes = sx127XDevice.ReadBytes(0x06, 3);
+               Debug.WriteLine($"Frequency Msb 0x{frequencyBytes[0]:x2} Mid 0x{frequencyBytes[1]:x2} Lsb 0x{frequencyBytes[2]:x2}");
 
-               Debug.WriteLine("Set the center frequency to 915MHz (write byte array)");
+               Debug.WriteLine("Set the centre frequency to 915MHz (write byte array)");
                byte[] frequencyWriteBytes = { 0xE4, 0xC0, 0x00 };
-               sx127xDevice.RegisterWrite(0x06, frequencyWriteBytes);
+               sx127XDevice.WriteBytes(0x06, frequencyWriteBytes);
 
-               sx127xDevice.RegisterDump();
+               Debug.WriteLine("Read the centre frequency (read byte array)");
+               frequencyBytes = sx127XDevice.ReadBytes(0x06, 3);
+               Debug.WriteLine($"Frequency Msb 0x{frequencyBytes[0]:x2} Mid 0x{frequencyBytes[1]:x2} Lsb 0x{frequencyBytes[2]:x2}");
+
+               sx127XDevice.RegisterDump();
 
                Thread.Sleep(30000);
             }
