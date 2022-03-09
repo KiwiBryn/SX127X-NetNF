@@ -50,19 +50,19 @@ namespace devMobile.IoT.SX127x.ShieldSPI
 
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
          int ledPinNumber = Gpio.IO17;
-         int chipSelectPinNumber = Gpio.IO16;
+         int chipSelectLine = Gpio.IO16;
 #endif
 #if NETDUINO3_WIFI
          int ledPinNumber = PinNumber('A', 10);
          // Arduino D10->PB10
-         int chipSelectPinNumber = PinNumber('B', 10);
+         int chipSelectLine = PinNumber('B', 10);
          // Arduino D9->PE5
          int resetPinNumber = PinNumber('E', 5);
 #endif
 #if ST_STM32F769I_DISCOVERY
          int ledPinNumber  = PinNumber('J', 5);
          // Arduino D10->PA11
-         int chipSelectPinNumber = PinNumber('A', 11);
+         int chipSelectLine = PinNumber('A', 11);
          // Arduino D9->PH6
          int resetPinNumber = PinNumber('H', 6);
 #endif
@@ -70,26 +70,26 @@ namespace devMobile.IoT.SX127x.ShieldSPI
 
          try
          {
+#if ESP32_WROOM_32_LORA_1_CHANNEL || NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+            // Setup the onboard LED
+            gpioController.OpenPin(ledPinNumber, PinMode.Output);
+#endif
+
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
             // Setup the reset pin
             gpioController.OpenPin(resetPinNumber, PinMode.Output);
             gpioController.Write(resetPinNumber, PinValue.High);
 #endif
 
-#if ESP32_WROOM_32_LORA_1_CHANNEL || NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-            // Setup the onboard LED
-            gpioController.OpenPin(ledPinNumber, PinMode.Output);
-#endif
-
 #if ESP32_WROOM_32_LORA_1_CHANNEL
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO12, DeviceFunction.SPI1_MISO);
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO13, DeviceFunction.SPI1_MOSI);
-            Configuration.SetPinFunction(nanoFramework.Hardware.Esp32.Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+            Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
+            Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
+            Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 #endif
 
-            var settings = new SpiConnectionSettings(SpiBusId, chipSelectPinNumber)
+            var settings = new SpiConnectionSettings(SpiBusId, chipSelectLine)
             {
-               ClockFrequency = 500000,
+               ClockFrequency = 1000000,
                Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
                SharingMode = SpiSharingMode.Shared,
             };
