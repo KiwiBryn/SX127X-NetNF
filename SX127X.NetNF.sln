@@ -9,13 +9,15 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "01.RegisterScan", "Register
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "02.RegisterReadAndWrite", "RegisterReadAndWrite\02.RegisterReadAndWrite.nfproj", "{D46E537B-87BE-4983-8C5F-A0DF4C043A08}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "03.ReceiveBasic", "ReceiveBasic\03.ReceiveBasic.nfproj", "{08E7021F-8766-40C5-97F8-73F3E0A961FB}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "04.ReceiveBasic", "ReceiveBasic\04.ReceiveBasic.nfproj", "{08E7021F-8766-40C5-97F8-73F3E0A961FB}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "04.TransmitBasic", "TransmitBasic\04.TransmitBasic.nfproj", "{6A7D0503-0DDC-477F-8EBF-73ACF6086EEC}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "03.TransmitBasic", "TransmitBasic\03.TransmitBasic.nfproj", "{6A7D0503-0DDC-477F-8EBF-73ACF6086EEC}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveInterrupt", "ReceiveInterrupt\ReceiveInterrupt.nfproj", "{7562703B-2986-4DE4-A90F-78064F460A34}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TransmitInterrupt", "TransmitInterrupt\TransmitInterrupt.nfproj", "{67E65E7F-71F4-40E8-9E85-D19316DBA06E}"
+EndProject
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveTransmitInterrupt", "ReceiveTransmitInterrupt\ReceiveTransmitInterrupt.nfproj", "{B00C8E48-2BE2-4D72-859B-0F09840D786C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,6 +67,12 @@ Global
 		{67E65E7F-71F4-40E8-9E85-D19316DBA06E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67E65E7F-71F4-40E8-9E85-D19316DBA06E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67E65E7F-71F4-40E8-9E85-D19316DBA06E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
