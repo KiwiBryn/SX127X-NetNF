@@ -16,8 +16,8 @@
 //---------------------------------------------------------------------------------
 #define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 //#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
-///#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
-namespace devMobile.IoT.SX127x.TransmitBasic
+//#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
+namespace devMobile.IoT.SX127x.ReceiveTransmitInterrupt
 {
    using System;
    using System.Diagnostics;
@@ -39,8 +39,9 @@ namespace devMobile.IoT.SX127x.TransmitBasic
       private const byte RegisterAddressWriteMask = 0x80;
 
       private readonly SpiDevice SX127XTransceiver;
+      private readonly GpioController gpioController;
 
-      public SX127XDevice(int busId, int chipSelectLine, int resetPin)
+      public SX127XDevice(int busId, int chipSelectLine, int interruptPin, int resetPin)
       {
          var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
@@ -51,17 +52,24 @@ namespace devMobile.IoT.SX127x.TransmitBasic
 
          SX127XTransceiver = new SpiDevice(settings);
 
-         // Factory reset pin configuration
          GpioController gpioController = new GpioController();
+
+
+         // Factory reset pin configuration
          gpioController.OpenPin(resetPin, PinMode.Output);
 
          gpioController.Write(resetPin, PinValue.Low);
          Thread.Sleep(20);
          gpioController.Write(resetPin, PinValue.High);
          Thread.Sleep(20);
+
+         // Interrupt pin for RX message & TX done notification 
+         gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+
+         gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
       }
 
-      public SX127XDevice(int busId, int chipSelectLine)
+      public SX127XDevice(int busId, int chipSelectLine, int interruptPin)
       {
          var settings = new SpiConnectionSettings(busId, chipSelectLine)
          {
@@ -71,6 +79,52 @@ namespace devMobile.IoT.SX127x.TransmitBasic
          };
 
          SX127XTransceiver = new SpiDevice(settings);
+
+         gpioController = new GpioController();
+
+         // Interrupt pin for RX message & TX done notification 
+         gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+
+         gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+      }
+
+      private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs e)
+      {
+         byte irqFlags = this.ReadByte(0x12); // RegIrqFlags
+         Debug.WriteLine($"RegIrqFlags 0X{irqFlags:x2}");
+
+         if ((irqFlags & 0b01000000) == 0b01000000)  // RxDone 
+         {
+            Debug.WriteLine("Receive-Message");
+            byte currentFifoAddress = this.ReadByte(0x10); // RegFifiRxCurrent
+            this.WriteByte(0x0d, currentFifoAddress); // RegFifoAddrPtr
+
+            byte numberOfBytes = this.ReadByte(0x13); // RegRxNbBytes
+
+            // Allocate buffer for message
+            byte[] messageBytes = this.ReadBytes(0X0, numberOfBytes);
+
+            // Remove unprintable characters from messages
+            for (int index = 0; index < messageBytes.Length; index++)
+            {
+               if ((messageBytes[index] < 0x20) || (messageBytes[index] > 0x7E))
+               {
+                  messageBytes[index] = 0x20;
+               }
+            }
+
+            string messageText = UTF8Encoding.UTF8.GetString(messageBytes, 0, messageBytes.Length);
+            Debug.WriteLine($"Received {messageBytes.Length} byte message {messageText}");
+         }
+
+         if ((irqFlags & 0b00001000) == 0b00001000)  // TxDone
+         {
+            this.WriteByte(0x01, 0b10000101); // RegOpMode set LoRa & RxContinuous
+            Debug.WriteLine("Transmit-Done");
+         }
+
+         this.WriteByte(0x40, 0b00000000); // RegDioMapping1 0b00000000 DI0 RxReady & TxReady
+         this.WriteByte(0x12, 0xff);// RegIrqFlags
       }
 
       public Byte ReadByte(byte registerAddress)
@@ -192,14 +246,19 @@ namespace devMobile.IoT.SX127x.TransmitBasic
          int chipSelectLine = PinNumber('B', 10);
          // Arduino D9->PE5
          int resetPinNumber = PinNumber('E', 5);
+         // Arduino D2 -PA3
+         int interruptPinNumber = PinNumber('A', 3);
 #endif
 #if ST_STM32F769I_DISCOVERY
          // Arduino D10->PA11
          int chipSelectLine = PinNumber('A', 11);
          // Arduino D9->PH6
          int resetPinNumber = PinNumber('H', 6);
+         // Arduino D2->PA4
+         int interruptPinNumber = PinNumber('A', 4);
 #endif
-         Debug.WriteLine("devMobile.IoT.SX127x.TransmitBasic starting");
+
+         Debug.WriteLine("devMobile.IoT.SX127x.ReceiveTransmitInterrupt starting");
 
          try
          {
@@ -208,59 +267,47 @@ namespace devMobile.IoT.SX127x.TransmitBasic
             Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
             Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 
-            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine);
+            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, interruptPinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, resetPinNumber);
+            SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, interruptPinNumber, resetPinNumber);
 #endif
             Thread.Sleep(500);
 
-            // Put device into LoRa + Standby mode
+            // Put device into LoRa + Sleep mode
             sx127XDevice.WriteByte(0x01, 0b10000000); // RegOpMode 
 
             // Set the frequency to 915MHz
-            byte[] frequencyBytes = { 0xE4, 0xC0, 0x00 }; // RegFrMsb, RegFrMid, RegFrLsb
-            sx127XDevice.WriteBytes(0x06, frequencyBytes);
+            byte[] frequencyWriteBytes = { 0xE4, 0xC0, 0x00 }; // RegFrMsb, RegFrMid, RegFrLsb
+            sx127XDevice.WriteBytes(0x06, frequencyWriteBytes);
 
             // More power PA Boost
             sx127XDevice.WriteByte(0x09, 0b10000000); // RegPaConfig
 
-            sx127XDevice.RegisterDump();
+            sx127XDevice.WriteByte(0x01, 0b10000101); // RegOpMode set LoRa & RxContinuous
 
             while (true)
             {
-               sx127XDevice.WriteByte(0x0E, 0x0); // RegFifoTxBaseAddress 
+               // Set the Register Fifo address pointer
+               sx127XDevice.WriteByte(0x0E, 0x00); // RegFifoTxBaseAddress 
 
                // Set the Register Fifo address pointer
                sx127XDevice.WriteByte(0x0D, 0x0); // RegFifoAddrPtr 
 
-               string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
+               string messageText = $"Hello LoRa {SendCount += 1}!";
 
                // load the message into the fifo
                byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
-               sx127XDevice.WriteBytes(0x0, messageBytes); // RegFifo
+               sx127XDevice.WriteBytes(0x0, messageBytes); // RegFifo 
 
                // Set the length of the message in the fifo
                sx127XDevice.WriteByte(0x22, (byte)messageBytes.Length); // RegPayloadLength
-
-               Debug.WriteLine($"Sending {messageBytes.Length} bytes message {messageText}");
-               /// Set the mode to LoRa + Transmit
+               sx127XDevice.WriteByte(0x40, 0b01000000); // RegDioMapping1 0b00000000 DI0 RxReady & TxReady
                sx127XDevice.WriteByte(0x01, 0b10000011); // RegOpMode 
 
-               // Wait until send done, no timeouts in PoC
-               Debug.WriteLine("Send-wait");
-               byte irqFlags = sx127XDevice.ReadByte(0x12); // RegIrqFlags
-               while ((irqFlags & 0b00001000) == 0)  // wait until TxDone cleared
-               {
-                  Thread.Sleep(10);
-                  irqFlags = sx127XDevice.ReadByte(0x12); // RegIrqFlags
-                  Debug.Write(".");
-               }
-               Debug.WriteLine("");
-               sx127XDevice.WriteByte(0x12, 0b00001000); // clear TxDone bit
-               Debug.WriteLine("Send-Done");
+               Debug.WriteLine($"Sending {messageBytes.Length} bytes message {messageText}");
 
-               Thread.Sleep(30000);
+               Thread.Sleep(10000);
             }
          }
          catch (Exception ex)
