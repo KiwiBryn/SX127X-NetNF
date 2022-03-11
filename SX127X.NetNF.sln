@@ -19,6 +19,10 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TransmitInterrupt", "Transm
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveTransmitInterrupt", "ReceiveTransmitInterrupt\ReceiveTransmitInterrupt.nfproj", "{B00C8E48-2BE2-4D72-859B-0F09840D786C}"
 EndProject
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "SX127XLoRaDeviceClient", "SX127XLoRaDeviceClient\SX127XLoRaDeviceClient.nfproj", "{693E3A68-A4D8-4052-A347-53F78AF15FE5}"
+EndProject
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "SX127XLoRaDevice", "SX127XLoRaDevice\SX127XLoRaDevice.nfproj", "{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +77,18 @@ Global
 		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B00C8E48-2BE2-4D72-859B-0F09840D786C}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{693E3A68-A4D8-4052-A347-53F78AF15FE5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{638A77F3-E9DE-4350-BBA1-65EF380DB0E4}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
