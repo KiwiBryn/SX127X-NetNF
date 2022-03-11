@@ -247,7 +247,7 @@ namespace devMobile.IoT.SX127x.ReceiveInterrupt
          // Arduino D9->PH6
          int resetPinNumber = PinNumber('H', 6);
          // Arduino D2->PA4
-         int interruptPinNumber = PinNumber('A', 4);
+         int interruptPinNumber = PinNumber('J', 1);
 #endif
 
          Debug.WriteLine("devMobile.IoT.SX127x.ReceiveInterrupt starting");
