@@ -232,6 +232,7 @@ namespace devMobile.IoT.SX127x.ReceiveInterrupt
       {
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
          int chipSelectLine = Gpio.IO16;
+         int interruptPinNumber = Gpio.IO26;
 #endif
 #if NETDUINO3_WIFI
          // Arduino D10->PB10
