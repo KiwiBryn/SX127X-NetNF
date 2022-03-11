@@ -13,11 +13,11 @@ Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "04.ReceiveBasic", "ReceiveB
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "03.TransmitBasic", "TransmitBasic\03.TransmitBasic.nfproj", "{6A7D0503-0DDC-477F-8EBF-73ACF6086EEC}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveInterrupt", "ReceiveInterrupt\ReceiveInterrupt.nfproj", "{7562703B-2986-4DE4-A90F-78064F460A34}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "06.ReceiveInterrupt", "ReceiveInterrupt\06.ReceiveInterrupt.nfproj", "{7562703B-2986-4DE4-A90F-78064F460A34}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "TransmitInterrupt", "TransmitInterrupt\TransmitInterrupt.nfproj", "{67E65E7F-71F4-40E8-9E85-D19316DBA06E}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "05.TransmitInterrupt", "TransmitInterrupt\05.TransmitInterrupt.nfproj", "{67E65E7F-71F4-40E8-9E85-D19316DBA06E}"
 EndProject
-Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "ReceiveTransmitInterrupt", "ReceiveTransmitInterrupt\ReceiveTransmitInterrupt.nfproj", "{B00C8E48-2BE2-4D72-859B-0F09840D786C}"
+Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "07.ReceiveTransmitInterrupt", "ReceiveTransmitInterrupt\07.ReceiveTransmitInterrupt.nfproj", "{B00C8E48-2BE2-4D72-859B-0F09840D786C}"
 EndProject
 Project("{11A8DD76-328B-46DF-9F39-F559912D0360}") = "SX127XLoRaDeviceClient", "SX127XLoRaDeviceClient\SX127XLoRaDeviceClient.nfproj", "{693E3A68-A4D8-4052-A347-53F78AF15FE5}"
 EndProject
