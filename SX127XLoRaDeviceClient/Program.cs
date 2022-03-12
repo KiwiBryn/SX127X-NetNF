@@ -112,6 +112,15 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			try
 			{
+				// Remove unprintable characters from messages
+				for (int index = 0; index < e.Data.Length; index++)
+				{
+					if ((e.Data[index] < 0x20) || (e.Data[index] > 0x7E))
+					{
+						e.Data[index] = 0x7C;
+					}
+				}
+
 				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
 
 				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = {e.Data.Length} byte message {messageText}");
