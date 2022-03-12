@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("devMobile.SX127x.TransmitBasic")]
+[assembly: AssemblyTitle("devMobile.IoT.SX127x.TransmitBasic")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("devMobile SX127x TransmitBasic")]
-[assembly: AssemblyCopyright("Copyright © devMobile Software")]
+[assembly: AssemblyCopyright("Copyright © March 2022 devMobile Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

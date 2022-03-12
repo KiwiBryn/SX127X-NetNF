@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("CSharp.BlankApplication")]
+[assembly: AssemblyTitle("devMobile.IoT.SX127xLoRaDeviceClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CSharp.BlankApplication")]
-[assembly: AssemblyCopyright("Copyright © ")]
+[assembly: AssemblyProduct("devMobile SX127x LoRa Device library Client")]
+[assembly: AssemblyCopyright("Copyright © March 2022 devMobile Software")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
