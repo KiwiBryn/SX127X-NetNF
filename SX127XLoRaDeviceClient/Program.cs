@@ -99,8 +99,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
 					byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
-					//Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
-					//sx127XDevice.Send(messageBytes);
+					Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
+					sx127XDevice.Send(messageBytes);
 
 					Thread.Sleep(50000);
 				}
