@@ -8,6 +8,7 @@ The repo has the source code for the series of blog posts written as I built thi
 01. [Registers](http://blog.devmobile.co.nz/2022/03/08/net-nanoframework-sx127x-lora-library-registers/)
 02. [Read and Write](http://blog.devmobile.co.nz/2022/03/09/net-nanoframework-sx127x-lora-library-read-amp-write/)
 03. [Transmit and Receive Basic](http://blog.devmobile.co.nz/2022/03/11/net-nanoframework-sx127x-lora-library-basic-receive-transmit/)
+04. [Now With added Interrupts](http://blog.devmobile.co.nz/2022/03/14/net-nanoframework-sx127x-lora-library-with-interrupts/)
 
 There are also a parallel development projects for [.Net](https://github.com/KiwiBryn/SX127XLoRa-Net), and [GHI ELectronicss](https://ghielectronics.com/) [TinyCLR](https://github.com/KiwiBryn/RFM9XLoRa-TinyCLR)
 
