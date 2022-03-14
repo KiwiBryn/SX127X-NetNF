@@ -60,6 +60,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Arduino D2->PA4
 			int interruptPinNumber = PinNumber('J', 1);
 #endif
+			Console.WriteLine("devMobile.IoT.SX127xLoRaDevice Client starting");
 
 			try
 			{
@@ -76,6 +77,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 				sx127XDevice.Initialise(SX127XDevice.RegOpModeMode.ReceiveContinuous,
 							Frequency,
+							lnaGain: SX127XDevice.RegLnaLnaGain.G3,
+							lnaBoost:true, 
 							powerAmplifier: SX127XDevice.PowerAmplifier.PABoost,
 							rxPayloadCrcOn: true,
 							rxDoneignoreIfCrcMissing: false
@@ -96,8 +99,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
 					byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
-					Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
-					sx127XDevice.Send(messageBytes);
+					//Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
+					//sx127XDevice.Send(messageBytes);
 
 					Thread.Sleep(50000);
 				}
