@@ -23,6 +23,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 	using System.Text;
 	using System.Threading;
 
+	using System.Device.Spi;
+
 	class Program
 	{
 		private const double Frequency = 915000000.0;
@@ -64,45 +66,55 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			try
 			{
-#if ESP32_WROOM_32_LORA_1_CHANNEL
-				Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
-				Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
-				Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+				var settings = new SpiConnectionSettings(SpiBusId, chipSelectLine)
+				{
+					ClockFrequency = 1000000,
+					Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
+					SharingMode = SpiSharingMode.Shared
+				};
 
-				sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, interruptPinNumber);
+				using (SpiDevice spiDevice = new SpiDevice(settings))
+				{
+#if ESP32_WROOM_32_LORA_1_CHANNEL
+					Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
+					Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
+					Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+
+					sx127XDevice = new SX127XDevice(spiDevice, interruptPinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-				sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, interruptPinNumber, resetPinNumber);
+					sx127XDevice = new SX127XDevice(spiDevice, interruptPinNumber, resetPinNumber);
 #endif
 
-				sx127XDevice.Initialise(SX127XDevice.RegOpModeMode.ReceiveContinuous,
-							Frequency,
-							lnaGain: SX127XDevice.RegLnaLnaGain.G3,
-							lnaBoost:true, 
-							powerAmplifier: SX127XDevice.PowerAmplifier.PABoost,
-							rxPayloadCrcOn: true,
-							rxDoneignoreIfCrcMissing: false
-							);
+					sx127XDevice.Initialise(SX127XDevice.RegOpModeMode.ReceiveContinuous,
+								Frequency,
+								lnaGain: SX127XDevice.RegLnaLnaGain.G3,
+								lnaBoost:true,
+								powerAmplifier: SX127XDevice.PowerAmplifier.PABoost,
+								rxPayloadCrcOn: true,
+								rxDoneignoreIfCrcMissing: false
+								);
 
 #if DEBUG
-				sx127XDevice.RegisterDump();
+					sx127XDevice.RegisterDump();
 #endif
 
-				sx127XDevice.OnReceive += SX127XDevice_OnReceive;
-				sx127XDevice.Receive();
-				sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
+					sx127XDevice.OnReceive += SX127XDevice_OnReceive;
+					sx127XDevice.Receive();
+					sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
 
-				Thread.Sleep(500);
+					Thread.Sleep(500);
 
-				while (true)
-				{
-					string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
+					while (true)
+					{
+						string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
-					byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
-					Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
-					sx127XDevice.Send(messageBytes);
+						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
+						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
+						sx127XDevice.Send(messageBytes);
 
-					Thread.Sleep(50000);
+						Thread.Sleep(50000);
+					}
 				}
 			}
 			catch (Exception ex)

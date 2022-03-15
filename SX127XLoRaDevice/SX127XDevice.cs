@@ -388,22 +388,15 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// Hardware configuration support
 		private readonly int ResetPin;
 		private readonly GpioController GpioController = null;
-		private readonly SpiDevice SX127XTransceiver = null;
+		private readonly SpiDevice _sx127xTransceiver = null;
 		private readonly Object SX127XRegFifoLock = new object();
 		private double Frequency = FrequencyDefault;
 		private bool RxDoneIgnoreIfCrcMissing = true;
 		private bool RxDoneIgnoreIfCrcInvalid = true;
 
-		public SX127XDevice(int busId, int chipSelectLine, int interruptPin, int resetPin)
+		public SX127XDevice(SpiDevice spiDevice, int interruptPin, int resetPin)
 		{
-			var settings = new SpiConnectionSettings(busId, chipSelectLine)
-			{
-				ClockFrequency = 1000000,
-				Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-				SharingMode = SpiSharingMode.Shared
-			};
-
-			SX127XTransceiver = new SpiDevice(settings);
+			_sx127xTransceiver = spiDevice;
 
 			GpioController = new GpioController();
 
@@ -429,16 +422,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			GpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 		}
 
-		public SX127XDevice(int busId, int chipSelectLine, int interruptPin)
+		public SX127XDevice(SpiDevice spiDevice, int interruptPin)
 		{
-			var settings = new SpiConnectionSettings(busId, chipSelectLine)
-			{
-				ClockFrequency = 1000000,
-				Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-				SharingMode = SpiSharingMode.Shared
-			};
-
-			SX127XTransceiver = new SpiDevice(settings);
+			_sx127xTransceiver = spiDevice;
 
 			GpioController = new GpioController();
 
@@ -460,7 +446,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { registerAddress &= RegisterAddressReadMask, 0x0 };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
 			return readBuffer[1];
 		}
@@ -470,7 +456,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { address &= RegisterAddressReadMask, 0x0, 0x0 };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
 			return (ushort)(readBuffer[2] + (readBuffer[1] << 8));
 		}
@@ -480,7 +466,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { address &= RegisterAddressReadMask, 0x0, 0x0 };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
 			return (ushort)((readBuffer[1] << 8) + readBuffer[2]);
 		}
@@ -493,7 +479,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			writeBuffer[0] = address &= RegisterAddressReadMask;
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 
 			Array.Copy(readBuffer, 1, replyBuffer, 0, length);
 
@@ -505,7 +491,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, value };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 		}
 
 		public void WriteWord(byte address, ushort value)
@@ -514,7 +500,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, valueBytes[0], valueBytes[1] };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 		}
 
 		public void WriteWordMsbLsb(byte address, ushort value)
@@ -523,7 +509,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte[] writeBuffer = new byte[] { address |= RegisterAddressWriteMask, valueBytes[1], valueBytes[0] };
 			byte[] readBuffer = new byte[writeBuffer.Length];
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 		}
 
 		public void WriteBytes(byte address, byte[] bytes)
@@ -534,7 +520,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			Array.Copy(bytes, 0, writeBuffer, 1, bytes.Length);
 			writeBuffer[0] = address |= RegisterAddressWriteMask;
 
-			SX127XTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
+			_sx127xTransceiver.TransferFullDuplex(writeBuffer, readBuffer);
 		}
 
 		public void RegisterDump()
