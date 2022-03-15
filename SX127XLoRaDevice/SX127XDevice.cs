@@ -387,18 +387,18 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// Hardware configuration support
 		private readonly int ResetPin;
-		private readonly GpioController GpioController = null;
+		private readonly GpioController _gpioController = null;
 		private readonly SpiDevice _sx127xTransceiver = null;
 		private readonly Object SX127XRegFifoLock = new object();
 		private double Frequency = FrequencyDefault;
 		private bool RxDoneIgnoreIfCrcMissing = true;
 		private bool RxDoneIgnoreIfCrcInvalid = true;
 
-		public SX127XDevice(SpiDevice spiDevice, int interruptPin, int resetPin)
+		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin, int resetPin)
 		{
 			_sx127xTransceiver = spiDevice;
 
-			GpioController = new GpioController();
+			_gpioController = gpioController;
 
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
 			Byte regVersionValue = this.ReadByte((byte)Registers.RegVersion);
@@ -409,24 +409,24 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			// Factory reset pin configuration
 			ResetPin = resetPin;
-			GpioController.OpenPin(resetPin, PinMode.Output);
+			_gpioController.OpenPin(resetPin, PinMode.Output);
 
-			GpioController.Write(resetPin, PinValue.Low);
+			_gpioController.Write(resetPin, PinValue.Low);
 			Thread.Sleep(20);
-			GpioController.Write(resetPin, PinValue.High);
+			_gpioController.Write(resetPin, PinValue.High);
 			Thread.Sleep(20);
 
 			// Interrupt pin for RX message & TX done notification 
-			GpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
 
-			GpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 		}
 
-		public SX127XDevice(SpiDevice spiDevice, int interruptPin)
+		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin)
 		{
 			_sx127xTransceiver = spiDevice;
 
-			GpioController = new GpioController();
+			_gpioController = gpioController;
 
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
 			Byte regVersionValue = this.ReadByte((byte)Registers.RegVersion);
@@ -436,9 +436,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Interrupt pin for RX message & TX done notification 
-			GpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
 
-			GpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 		}
 
 		public Byte ReadByte(byte registerAddress)
@@ -582,9 +582,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Strobe Reset pin briefly to factory reset SX127X chip
 			if (ResetPin != 0)
 			{
-				GpioController.Write(ResetPin, PinValue.Low);
+				_gpioController.Write(ResetPin, PinValue.Low);
 				Thread.Sleep(20);
-				GpioController.Write(ResetPin, PinValue.High);
+				_gpioController.Write(ResetPin, PinValue.High);
 				Thread.Sleep(20);
 			}
 
