@@ -378,8 +378,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		[Flags]
 		public enum RegPaDac
 		{
-			Normal = 0b01010100,
-			Boost = 0b01010111,
+			Normal = 0b10000100,
+			Boost = 0b10000111,
 		}
 		private const byte RegPaDacPABoostThreshold = 20;
 
