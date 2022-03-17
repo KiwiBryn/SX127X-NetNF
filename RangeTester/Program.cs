@@ -17,6 +17,7 @@
 #define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 //#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
+#define ARDUINO_LORA_DUPLEX
 namespace devMobile.IoT.SX127x.RangeTester
 {
 	using System;
@@ -117,13 +118,24 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 					while (true)
 					{
+#if ARDUINO_LORA_DUPLEX
+						string messageText = $"    Hello LoRa from .NET nanoFramework {SendCount += 1}!";
+
+						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
+						messageBytes[0] = 0xff;
+						messageBytes[1] = 0xcc;
+						messageBytes[2] = (byte)SendCount;
+						messageBytes[3] = (byte)(messageBytes.Length - 4);
+						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText.Substring(4)}");
+#else
 						string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
 						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
 						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
+#endif
 						_sx127XDevice.Send(messageBytes);
 
-						Thread.Sleep(1000);
+						Thread.Sleep(30000);
 					}
 				}
 			}
