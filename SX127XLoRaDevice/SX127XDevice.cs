@@ -28,8 +28,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public const byte MessageLengthMinimum = 0;
 		public const byte MessageLengthMaximum = 128;
 
-		private const byte RegisterAddressMinimum = 0X0;
-		private const byte RegisterAddressMaximum = 0x42;
 		private const byte RegisterAddressReadMask = 0X7f;
 		private const byte RegisterAddressWriteMask = 0x80;
 
@@ -110,7 +108,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegVersion = 0x42,
 			RegPaDac = 0x4d,
 
-			MaxValue = RegVersion,
+			MaxValue = RegPaDac,
 		}
 
 		// RegOpMode mode flags
@@ -526,7 +524,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public void RegisterDump()
 		{
 			Debug.WriteLine("Register dump");
-			for (byte registerIndex = RegisterAddressMinimum; registerIndex <= RegisterAddressMaximum; registerIndex++)
+			for (byte registerIndex = (byte)Registers.MinValue; registerIndex <= (byte)Registers.MaxValue; registerIndex++)
 			{
 				byte registerValue = this.ReadByte(registerIndex);
 
