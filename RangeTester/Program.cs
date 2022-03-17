@@ -17,7 +17,7 @@
 #define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 //#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
-#define ARDUINO_LORA_DUPLEX
+//#define ARDUINO_LORA_DUPLEX
 namespace devMobile.IoT.SX127x.RangeTester
 {
 	using System;
@@ -165,8 +165,8 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 			try
 			{
-				// Remove unprintable characters from messages
-				for (int index = 0; index < e.Data.Length; index++)
+#if ARDUINO_LORA_DUPLEX
+				for (int index = 4; index < e.Data.Length; index++)
 				{
 					if ((e.Data[index] < 0x20) || (e.Data[index] > 0x7E))
 					{
@@ -174,9 +174,16 @@ namespace devMobile.IoT.SX127x.RangeTester
 					}
 				}
 
+				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 4, e.Data.Length - 4);
+
+				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[0]:x} From 0x{e.Data[1]:x} Count{e.Data[2]} {e.Data[3]} byte message {messageText}");
+#else
+
 				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
 
 				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = {e.Data.Length} byte message {messageText}");
+#endif
+
 			}
 			catch (Exception ex)
 			{
