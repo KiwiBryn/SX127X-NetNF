@@ -97,11 +97,11 @@ namespace devMobile.IoT.SX127x.RangeTester
 					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					_sx127XDevice.Initialise(SX127XDevice.RegOpModeMode.ReceiveContinuous,
+					_sx127XDevice.Initialise(SX127xConfiguration.RegOpModeMode.ReceiveContinuous,
 								Frequency,
-								lnaGain: SX127XDevice.RegLnaLnaGain.G3,
+								lnaGain: SX127xConfiguration.RegLnaLnaGain.G3,
 								lnaBoost: true,
-								powerAmplifier: SX127XDevice.PowerAmplifier.PABoost,
+								powerAmplifier: SX127xConfiguration.PowerAmplifier.PABoost,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
@@ -193,7 +193,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 		private static void SX127XDevice_OnTransmit(object sender, SX127XDevice.OnDataTransmitedEventArgs e)
 		{
-			_sx127XDevice.SetMode(SX127XDevice.RegOpModeMode.ReceiveContinuous);
+			_sx127XDevice.SetMode(SX127xConfiguration.RegOpModeMode.ReceiveContinuous);
 
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
 		}
