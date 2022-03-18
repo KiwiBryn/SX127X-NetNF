@@ -88,11 +88,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					sx127XDevice.Initialise(SX127xConfiguration.RegOpModeMode.ReceiveContinuous,
+					sx127XDevice.Initialise(Configuration.RegOpModeMode.ReceiveContinuous,
 								Frequency,
-								lnaGain: SX127xConfiguration.RegLnaLnaGain.G3,
+								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost:true,
-								powerAmplifier: SX127xConfiguration.PowerAmplifier.PABoost,
+								powerAmplifier: Configuration.PowerAmplifier.PABoost,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
@@ -150,7 +150,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		private static void SX127XDevice_OnTransmit(object sender, SX127XDevice.OnDataTransmitedEventArgs e)
 		{
-			sx127XDevice.SetMode(SX127xConfiguration.RegOpModeMode.ReceiveContinuous);
+			sx127XDevice.SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
 
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
 		}
