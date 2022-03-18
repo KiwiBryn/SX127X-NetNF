@@ -62,14 +62,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
-			_gpioController = gpioController;
-
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
 			Byte regVersionValue = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegVersion);
 			if (regVersionValue != SX127xConfiguration.RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
+
+			_gpioController = gpioController;
 
 			// Factory reset pin configuration
 			_resetPin = resetPin;
