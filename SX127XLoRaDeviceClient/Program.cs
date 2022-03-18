@@ -75,14 +75,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				};
 
 				using (SpiDevice spiDevice = new SpiDevice(settings))
+#if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
 				using (GpioController gpioController = new GpioController())
+#endif
 				{
 #if ESP32_WROOM_32_LORA_1_CHANNEL
 					Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
 					Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
 					Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber);
+					sx127XDevice = new SX127XDevice(spiDevice, interruptPinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
 					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber, resetPinNumber);

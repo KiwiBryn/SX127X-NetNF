@@ -81,17 +81,16 @@ namespace devMobile.IoT.SX127x.RangeTester
 					//SharingMode = SpiSharingMode.Shared
 				};
 
-				using (_gpioController = new GpioController())
 				using (SpiDevice spiDevice = new SpiDevice(settings))
-				{
-
+				using (GpioController gpioController = new GpioController())
+				{ 
 #if ESP32_WROOM_32_LORA_1_CHANNEL
 					Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
 					Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
 					Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
 
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber);
-#endif
+					_sx127XDevice = new SX127XDevice(spiDevice, interruptPinNumber);
+#endif 
 
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
 					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, interruptPinNumber, resetPinNumber);
