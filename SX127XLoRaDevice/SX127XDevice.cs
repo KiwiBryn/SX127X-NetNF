@@ -54,7 +54,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private readonly GpioController _gpioController = null;
 		private readonly RegisterManager _registerManager = null;
 		private readonly Object _regFifoLock = new object();
-		private double _frequency = SX127xConfiguration.FrequencyDefault;
+		private double _frequency = Configuration.FrequencyDefault;
 		private bool _rxDoneIgnoreIfCrcMissing = true;
 		private bool _rxDoneIgnoreIfCrcInvalid = true;
 
@@ -63,8 +63,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
-			Byte regVersionValue = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegVersion);
-			if (regVersionValue != SX127xConfiguration.RegVersionValueExpected)
+			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
+			if (regVersionValue != Configuration.RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
@@ -93,8 +93,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_gpioController = gpioController;
 
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
-			Byte regVersionValue = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegVersion);
-			if (regVersionValue != SX127xConfiguration.RegVersionValueExpected)
+			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
+			if (regVersionValue != Configuration.RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
@@ -105,43 +105,43 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 		}
 
-		public void SetMode(SX127xConfiguration.RegOpModeMode mode)
+		public void SetMode(Configuration.RegOpModeMode mode)
 		{
 			byte regOpModeValue;
 
-			regOpModeValue = SX127xConfiguration.RegOpModeLongRangeModeLoRa;
-			regOpModeValue |= SX127xConfiguration.RegOpModeAcessSharedRegLoRa;
-			if (_frequency > SX127xConfiguration.SX127XMidBandThreshold)
+			regOpModeValue = Configuration.RegOpModeLongRangeModeLoRa;
+			regOpModeValue |= Configuration.RegOpModeAcessSharedRegLoRa;
+			if (_frequency > Configuration.SX127XMidBandThreshold)
 			{
-				regOpModeValue |= SX127xConfiguration.RegOpModeLowFrequencyModeOnHighFrequency;
+				regOpModeValue |= Configuration.RegOpModeLowFrequencyModeOnHighFrequency;
 			}
 			else
 			{
-				regOpModeValue |= SX127xConfiguration.RegOpModeLowFrequencyModeOnLowFrequency;
+				regOpModeValue |= Configuration.RegOpModeLowFrequencyModeOnLowFrequency;
 			}
 			regOpModeValue |= (byte)mode;
-			_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegOpMode, regOpModeValue);
+			_registerManager.WriteByte((byte)Configuration.Registers.RegOpMode, regOpModeValue);
 		}
 
-		public void Initialise(SX127xConfiguration.RegOpModeMode modeAfterInitialise, // RegOpMode
-			double frequency = SX127xConfiguration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
+		public void Initialise(Configuration.RegOpModeMode modeAfterInitialise, // RegOpMode
+			double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
-			sbyte outputPower = SX127xConfiguration.OutputPowerDefault, SX127xConfiguration.PowerAmplifier powerAmplifier = SX127xConfiguration.PowerAmplifierDefault, // RegPAConfig & RegPaDac
-			bool ocpOn = SX127xConfiguration.RegOcpDefault, byte ocpTrim = SX127xConfiguration.RegOcpOcpTrimDefault, // RegOcp
-			SX127xConfiguration.RegLnaLnaGain lnaGain = SX127xConfiguration.LnaGainDefault, bool lnaBoost = SX127xConfiguration.LnaBoostDefault, // RegLna
-			SX127xConfiguration.RegModemConfigBandwidth bandwidth = SX127xConfiguration.RegModemConfigBandwidthDefault, SX127xConfiguration.RegModemConfigCodingRate codingRate = SX127xConfiguration.RegModemConfigCodingRateDefault, SX127xConfiguration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = SX127xConfiguration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
-			SX127xConfiguration.RegModemConfig2SpreadingFactor spreadingFactor = SX127xConfiguration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
-			ushort symbolTimeout = SX127xConfiguration.SymbolTimeoutDefault,
-			ushort preambleLength = SX127xConfiguration.PreambleLengthDefault,
-			byte payloadLength = SX127xConfiguration.PayloadLengthDefault,
-			byte payloadMaxLength = SX127xConfiguration.PayloadMaxLengthDefault,
-			byte freqHoppingPeriod = SX127xConfiguration.FreqHoppingPeriodDefault,
-			bool lowDataRateOptimize = SX127xConfiguration.LowDataRateOptimizeDefault, bool agcAutoOn = SX127xConfiguration.AgcAutoOnDefault,
-			byte ppmCorrection = SX127xConfiguration.ppmCorrectionDefault,
-			SX127xConfiguration.RegDetectOptimizeDectionOptimize detectionOptimize = SX127xConfiguration.RegDetectOptimizeDectionOptimizeDefault,
-			bool invertIQRX = SX127xConfiguration.InvertIqRXDefault, bool invertIQTX = SX127xConfiguration.InvertIqTXDefault,
-			SX127xConfiguration.RegisterDetectionThreshold detectionThreshold = SX127xConfiguration.RegisterDetectionThresholdDefault,
-			byte syncWord = SX127xConfiguration.RegSyncWordDefault)
+			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.PowerAmplifier powerAmplifier = Configuration.PowerAmplifierDefault, // RegPAConfig & RegPaDac
+			bool ocpOn = Configuration.RegOcpDefault, byte ocpTrim = Configuration.RegOcpOcpTrimDefault, // RegOcp
+			Configuration.RegLnaLnaGain lnaGain = Configuration.LnaGainDefault, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
+			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidthDefault, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRateDefault, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
+			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
+			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
+			ushort preambleLength = Configuration.PreambleLengthDefault,
+			byte payloadLength = Configuration.PayloadLengthDefault,
+			byte payloadMaxLength = Configuration.PayloadMaxLengthDefault,
+			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
+			bool lowDataRateOptimize = Configuration.LowDataRateOptimizeDefault, bool agcAutoOn = Configuration.AgcAutoOnDefault,
+			byte ppmCorrection = Configuration.ppmCorrectionDefault,
+			Configuration.RegDetectOptimizeDectionOptimize detectionOptimize = Configuration.RegDetectOptimizeDectionOptimizeDefault,
+			bool invertIQRX = Configuration.InvertIqRXDefault, bool invertIQTX = Configuration.InvertIqTXDefault,
+			Configuration.RegisterDetectionThreshold detectionThreshold = Configuration.RegisterDetectionThresholdDefault,
+			byte syncWord = Configuration.RegSyncWordDefault)
 		{
 
 			_frequency = frequency; // Store this away for RSSI adjustments
@@ -158,163 +158,163 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Put the device into sleep mode so registers can be changed
-			SetMode(SX127xConfiguration.RegOpModeMode.Sleep);
+			SetMode(Configuration.RegOpModeMode.Sleep);
 
 			// Configure RF Carrier frequency 
-			if (frequency != SX127xConfiguration.FrequencyDefault)
+			if (frequency != Configuration.FrequencyDefault)
 			{
-				byte[] bytes = BitConverter.GetBytes((long)(frequency / SX127xConfiguration.SX127X_FSTEP));
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFrMsb, bytes[2]);
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFrMid, bytes[1]);
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFrLsb, bytes[0]);
+				byte[] bytes = BitConverter.GetBytes((long)(frequency / Configuration.SX127X_FSTEP));
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFrMsb, bytes[2]);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFrMid, bytes[1]);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFrLsb, bytes[0]);
 			}
 
 			// Validate the OutputPower
-			if (powerAmplifier == SX127xConfiguration.PowerAmplifier.Rfo)
+			if (powerAmplifier == Configuration.PowerAmplifier.Rfo)
 			{
-				if ((outputPower < SX127xConfiguration.OutputPowerRfoMin) || (outputPower > SX127xConfiguration.OutputPowerRfoMax))
+				if ((outputPower < Configuration.OutputPowerRfoMin) || (outputPower > Configuration.OutputPowerRfoMax))
 				{
-					throw new ArgumentException($"outputPower must be between {SX127xConfiguration.OutputPowerRfoMin} and {SX127xConfiguration.OutputPowerRfoMax}", nameof(outputPower));
+					throw new ArgumentException($"outputPower must be between {Configuration.OutputPowerRfoMin} and {Configuration.OutputPowerRfoMax}", nameof(outputPower));
 				}
 			}
-			if (powerAmplifier == SX127xConfiguration.PowerAmplifier.PABoost)
+			if (powerAmplifier == Configuration.PowerAmplifier.PABoost)
 			{
-				if ((outputPower < SX127xConfiguration.OutputPowerPABoostMin) || (outputPower > SX127xConfiguration.OutputPowerPABoostMax))
+				if ((outputPower < Configuration.OutputPowerPABoostMin) || (outputPower > Configuration.OutputPowerPABoostMax))
 				{
-					throw new ArgumentException($"outputPower must be between {SX127xConfiguration.OutputPowerPABoostMin} and {SX127xConfiguration.OutputPowerPABoostMax}", nameof(outputPower));
+					throw new ArgumentException($"outputPower must be between {Configuration.OutputPowerPABoostMin} and {Configuration.OutputPowerPABoostMax}", nameof(outputPower));
 				}
 			}
 
-			if ((powerAmplifier != SX127xConfiguration.PowerAmplifierDefault) || (outputPower != SX127xConfiguration.OutputPowerDefault))
+			if ((powerAmplifier != Configuration.PowerAmplifierDefault) || (outputPower != Configuration.OutputPowerDefault))
 			{
-				byte regPAConfigValue = SX127xConfiguration.RegPAConfigMaxPowerMax;
+				byte regPAConfigValue = Configuration.RegPAConfigMaxPowerMax;
 
-				if (powerAmplifier == SX127xConfiguration.PowerAmplifier.Rfo)
+				if (powerAmplifier == Configuration.PowerAmplifier.Rfo)
 				{
-					regPAConfigValue |= SX127xConfiguration.RegPAConfigPASelectRfo;
+					regPAConfigValue |= Configuration.RegPAConfigPASelectRfo;
 
 					regPAConfigValue |= (byte)(outputPower + 1);
 
-					_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPAConfig, regPAConfigValue);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
 				}
 
-				if (powerAmplifier == SX127xConfiguration.PowerAmplifier.PABoost)
+				if (powerAmplifier == Configuration.PowerAmplifier.PABoost)
 				{
-					regPAConfigValue |= SX127xConfiguration.RegPAConfigPASelectPABoost;
+					regPAConfigValue |= Configuration.RegPAConfigPASelectPABoost;
 
-					if (outputPower > SX127xConfiguration.RegPaDacPABoostThreshold)
+					if (outputPower > Configuration.RegPaDacPABoostThreshold)
 					{
-						_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPaDac, (byte)SX127xConfiguration.RegPaDac.Boost);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Boost);
 
 						regPAConfigValue |= (byte)(outputPower - 8);
 
-						_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPAConfig, regPAConfigValue);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
 					}
 					else
 					{
-						_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPaDac, (byte)SX127xConfiguration.RegPaDac.Normal);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
 
 						regPAConfigValue |= (byte)(outputPower - 5);
 
-						_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPAConfig, regPAConfigValue);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
 					}
 				}
 			}
 
 			// Set RegOcp if any of the settings not defaults
-			if ((ocpOn != true) || (ocpTrim != SX127xConfiguration.RegOcpOcpTrimDefault))
+			if ((ocpOn != true) || (ocpTrim != Configuration.RegOcpOcpTrimDefault))
 			{
 				byte regOcpValue = ocpTrim;
 				if (ocpOn)
 				{
-					regOcpValue |= SX127xConfiguration.RegOcpOn;
+					regOcpValue |= Configuration.RegOcpOn;
 				}
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegOcp, regOcpValue);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegOcp, regOcpValue);
 			}
 
 			// Set RegLna if any of the settings not defaults
-			if ((lnaGain != SX127xConfiguration.LnaGainDefault) || (lnaBoost != false))
+			if ((lnaGain != Configuration.LnaGainDefault) || (lnaBoost != false))
 			{
 				byte regLnaValue = (byte)lnaGain;
 				if (lnaBoost)
 				{
-					if (_frequency > SX127xConfiguration.SX127XMidBandThreshold)
+					if (_frequency > Configuration.SX127XMidBandThreshold)
 					{
-						regLnaValue |= SX127xConfiguration.RegLnaLnaBoostHfOn;
+						regLnaValue |= Configuration.RegLnaLnaBoostHfOn;
 					}
 					else
 					{
-						regLnaValue |= SX127xConfiguration.RegLnaLnaBoostLfOn;
+						regLnaValue |= Configuration.RegLnaLnaBoostLfOn;
 					}
 				}
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegLna, regLnaValue);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegLna, regLnaValue);
 			}
 
 			// Set regModemConfig1 if any of the settings not defaults
-			if ((bandwidth != SX127xConfiguration.RegModemConfigBandwidthDefault) || (codingRate != SX127xConfiguration.RegModemConfigCodingRateDefault) || (implicitHeaderModeOn != SX127xConfiguration.RegModemConfigImplicitHeaderModeOnDefault))
+			if ((bandwidth != Configuration.RegModemConfigBandwidthDefault) || (codingRate != Configuration.RegModemConfigCodingRateDefault) || (implicitHeaderModeOn != Configuration.RegModemConfigImplicitHeaderModeOnDefault))
 			{
 				byte regModemConfig1Value = (byte)bandwidth;
 				regModemConfig1Value |= (byte)codingRate;
 				regModemConfig1Value |= (byte)implicitHeaderModeOn;
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegModemConfig1, regModemConfig1Value);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegModemConfig1, regModemConfig1Value);
 			}
 
-			if ((symbolTimeout < SX127xConfiguration.symbolTimeoutMin) || (symbolTimeout > SX127xConfiguration.symbolTimeoutMax))
+			if ((symbolTimeout < Configuration.symbolTimeoutMin) || (symbolTimeout > Configuration.symbolTimeoutMax))
 			{
-				throw new ArgumentException($"symbolTimeout must be between {SX127xConfiguration.symbolTimeoutMin} and {SX127xConfiguration.symbolTimeoutMax}", nameof(symbolTimeout));
+				throw new ArgumentException($"symbolTimeout must be between {Configuration.symbolTimeoutMin} and {Configuration.symbolTimeoutMax}", nameof(symbolTimeout));
 			}
 
 			// Set regModemConfig2 if any of the settings not defaults
-			if ((spreadingFactor != SX127xConfiguration.RegModemConfig2SpreadingFactorDefault) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != SX127xConfiguration.SymbolTimeoutDefault))
+			if ((spreadingFactor != Configuration.RegModemConfig2SpreadingFactorDefault) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
 			{
 				byte RegModemConfig2Value = (byte)spreadingFactor;
 				if (txContinuousMode)
 				{
-					RegModemConfig2Value |= SX127xConfiguration.RegModemConfig2TxContinuousModeOn;
+					RegModemConfig2Value |= Configuration.RegModemConfig2TxContinuousModeOn;
 				}
 				if (rxPayloadCrcOn)
 				{
-					RegModemConfig2Value |= SX127xConfiguration.RegModemConfig2RxPayloadCrcOn;
+					RegModemConfig2Value |= Configuration.RegModemConfig2RxPayloadCrcOn;
 				}
 				// Get the MSB of SymbolTimeout
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);
 
 				// Only the zeroth & second bit of byte matter
-				symbolTimeoutBytes[1] &= SX127xConfiguration.SymbolTimeoutMsbMask;
+				symbolTimeoutBytes[1] &= Configuration.SymbolTimeoutMsbMask;
 				RegModemConfig2Value |= symbolTimeoutBytes[1];
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegModemConfig2, RegModemConfig2Value);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegModemConfig2, RegModemConfig2Value);
 			}
 
 			// RegModemConfig2.SymbTimout + RegSymbTimeoutLsb
-			if (symbolTimeout != SX127xConfiguration.SymbolTimeoutDefault)
+			if (symbolTimeout != Configuration.SymbolTimeoutDefault)
 			{
 				// Get the LSB of SymbolTimeout
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegSymbTimeout, symbolTimeoutBytes[0]);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegSymbTimeout, symbolTimeoutBytes[0]);
 			}
 
 			// RegPreambleMsb + RegPreambleLsb
-			if (preambleLength != SX127xConfiguration.PreambleLengthDefault)
+			if (preambleLength != Configuration.PreambleLengthDefault)
 			{
-				_registerManager.WriteWordMsbLsb((Byte)SX127xConfiguration.Registers.RegPreambleMsb, preambleLength);
+				_registerManager.WriteWordMsbLsb((Byte)Configuration.Registers.RegPreambleMsb, preambleLength);
 			}
 
 			// RegPayloadLength
-			if (payloadLength != SX127xConfiguration.PayloadLengthDefault)
+			if (payloadLength != Configuration.PayloadLengthDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPayloadLength, payloadLength);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegPayloadLength, payloadLength);
 			}
 
 			// RegMaxPayloadLength
-			if (payloadMaxLength != SX127xConfiguration.PayloadMaxLengthDefault)
+			if (payloadMaxLength != Configuration.PayloadMaxLengthDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegMaxPayloadLength, payloadMaxLength);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegMaxPayloadLength, payloadMaxLength);
 			}
 
 			// RegHopPeriod
-			if (freqHoppingPeriod != SX127xConfiguration.FreqHoppingPeriodDefault)
+			if (freqHoppingPeriod != Configuration.FreqHoppingPeriodDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegHopPeriod, freqHoppingPeriod);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegHopPeriod, freqHoppingPeriod);
 			}
 
 			// RegModemConfig3
@@ -323,57 +323,57 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				byte regModemConfig3Value = 0;
 				if (lowDataRateOptimize)
 				{
-					regModemConfig3Value |= SX127xConfiguration.RegModemConfig3LowDataRateOptimizeOn;
+					regModemConfig3Value |= Configuration.RegModemConfig3LowDataRateOptimizeOn;
 				}
 				if (agcAutoOn)
 				{
-					regModemConfig3Value |= SX127xConfiguration.RegModemConfig3AgcAutoOn;
+					regModemConfig3Value |= Configuration.RegModemConfig3AgcAutoOn;
 				}
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegModemConfig3, regModemConfig3Value);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegModemConfig3, regModemConfig3Value);
 			}
 
 			// RegPpmCorrection
-			if (ppmCorrection != SX127xConfiguration.ppmCorrectionDefault)
+			if (ppmCorrection != Configuration.ppmCorrectionDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPpmCorrection, ppmCorrection);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegPpmCorrection, ppmCorrection);
 			}
 
 			// RegDetectOptimize
-			if (detectionOptimize != SX127xConfiguration.RegDetectOptimizeDectionOptimizeDefault)
+			if (detectionOptimize != Configuration.RegDetectOptimizeDectionOptimizeDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegDetectOptimize, (byte)detectionOptimize);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegDetectOptimize, (byte)detectionOptimize);
 			}
 
-			if ((invertIQRX != SX127xConfiguration.InvertIqRXDefault) || (invertIQTX != SX127xConfiguration.InvertIqTXDefault))
+			if ((invertIQRX != Configuration.InvertIqRXDefault) || (invertIQTX != Configuration.InvertIqTXDefault))
 			{
-				byte regInvertIQValue = SX127xConfiguration.RegInvertIdDefault;
+				byte regInvertIQValue = Configuration.RegInvertIdDefault;
 
 				if (invertIQRX)
 				{
-					regInvertIQValue |= SX127xConfiguration.InvertIqRXOn;
+					regInvertIQValue |= Configuration.InvertIqRXOn;
 				}
 
 				if (invertIQTX)
 				{
-					regInvertIQValue |= SX127xConfiguration.InvertIqTXOn;
+					regInvertIQValue |= Configuration.InvertIqTXOn;
 				}
 
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegInvertIQ, regInvertIQValue);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ, regInvertIQValue);
 
 				if (invertIQRX || invertIQTX)
 				{
-					_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegInvertIQ2, SX127xConfiguration.RegInvertIq2On);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2On);
 				}
 				else
 				{
-					_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegInvertIQ2, SX127xConfiguration.RegInvertIq2Off);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2Off);
 				}
 			}
 
 			// RegSyncWordDefault 
-			if (syncWord != SX127xConfiguration.RegSyncWordDefault)
+			if (syncWord != Configuration.RegSyncWordDefault)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegSyncWord, syncWord);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegSyncWord, syncWord);
 			}
 
 			// TODO revist this split & move to onReceive function
@@ -400,8 +400,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check to see if payload has CRC 
 			if (_rxDoneIgnoreIfCrcMissing)
 			{
-				byte regHopChannel = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegHopChannel);
-				if ((regHopChannel & (byte)SX127xConfiguration.RegHopChannelMask.CrcOnPayload) != (byte)SX127xConfiguration.RegHopChannelFlags.CrcOnPayload)
+				byte regHopChannel = _registerManager.ReadByte((byte)Configuration.Registers.RegHopChannel);
+				if ((regHopChannel & (byte)Configuration.RegHopChannelMask.CrcOnPayload) != (byte)Configuration.RegHopChannelFlags.CrcOnPayload)
 				{
 					return;
 				}
@@ -410,7 +410,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check to see if payload CRC is valid
 			if (_rxDoneIgnoreIfCrcInvalid)
 			{
-				if ((IrqFlags & (byte)SX127xConfiguration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)SX127xConfiguration.RegIrqFlagsMask.PayLoadCrcErrorMask)
+				if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask)
 				{
 					return;
 				}
@@ -419,36 +419,36 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Extract the message from the RFM9X fifo, try and keep lock in place for the minimum possible time
 			lock (_regFifoLock)
 			{
-				byte currentFifoAddress = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegFifoRxCurrent);
+				byte currentFifoAddress = _registerManager.ReadByte((byte)Configuration.Registers.RegFifoRxCurrent);
 
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFifoAddrPtr, currentFifoAddress);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFifoAddrPtr, currentFifoAddress);
 
-				byte numberOfBytes = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegRxNbBytes);
+				byte numberOfBytes = _registerManager.ReadByte((byte)Configuration.Registers.RegRxNbBytes);
 
-				payloadBytes = _registerManager.ReadBytes((byte)SX127xConfiguration.Registers.RegFifo, numberOfBytes);
+				payloadBytes = _registerManager.ReadBytes((byte)Configuration.Registers.RegFifo, numberOfBytes);
 			}
 
 			// Get the RSSI HF vs. LF port adjustment section 5.5.5 RSSI and SNR in LoRa Mode
-			float packetSnr = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegPktSnrValue) * 0.25f;
+			float packetSnr = _registerManager.ReadByte((byte)Configuration.Registers.RegPktSnrValue) * 0.25f;
 
-			int rssi = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegRssiValue);
-			if (_frequency > SX127xConfiguration.SX127XMidBandThreshold)
+			int rssi = _registerManager.ReadByte((byte)Configuration.Registers.RegRssiValue);
+			if (_frequency > Configuration.SX127XMidBandThreshold)
 			{
-				rssi = SX127xConfiguration.RssiAdjustmentHF + rssi;
+				rssi = Configuration.RssiAdjustmentHF + rssi;
 			}
 			else
 			{
-				rssi = SX127xConfiguration.RssiAdjustmentLF + rssi;
+				rssi = Configuration.RssiAdjustmentLF + rssi;
 			}
 
-			int packetRssi = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegPktRssiValue);
-			if (_frequency > SX127xConfiguration.SX127XMidBandThreshold)
+			int packetRssi = _registerManager.ReadByte((byte)Configuration.Registers.RegPktRssiValue);
+			if (_frequency > Configuration.SX127XMidBandThreshold)
 			{
-				packetRssi = SX127xConfiguration.RssiAdjustmentHF + packetRssi;
+				packetRssi = Configuration.RssiAdjustmentHF + packetRssi;
 			}
 			else
 			{
-				packetRssi = SX127xConfiguration.RssiAdjustmentLF + packetRssi;
+				packetRssi = Configuration.RssiAdjustmentLF + packetRssi;
 			}
 
 			OnDataReceivedEventArgs receiveArgs = new OnDataReceivedEventArgs
@@ -465,27 +465,27 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
 		{
 			// Read RegIrqFlags to see what caused the interrupt
-			Byte IrqFlags = _registerManager.ReadByte((byte)SX127xConfiguration.Registers.RegIrqFlags);
+			Byte IrqFlags = _registerManager.ReadByte((byte)Configuration.Registers.RegIrqFlags);
 
 			// Check RxDone for inbound message
-			if ((IrqFlags & (byte)SX127xConfiguration.RegIrqFlagsMask.RxDoneMask) == (byte)SX127xConfiguration.RegIrqFlags.RxDone)
+			if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
 			{
 				ProcessRxDone(IrqFlags);
 			}
 
 			// Check TxDone for outbound message
-			if ((IrqFlags & (byte)SX127xConfiguration.RegIrqFlagsMask.TxDoneMask) == (byte)SX127xConfiguration.RegIrqFlags.TxDone)
+			if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
 			{
 				ProcessTxDone(IrqFlags);
 			}
 
-			_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegDioMapping1, (byte)SX127xConfiguration.RegDioMapping1.Dio0RxDone);
-			_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegIrqFlags, (byte)SX127xConfiguration.RegIrqFlags.ClearAll);
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
+			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ClearAll);
 		}
 
 		public void Receive()
 		{
-			SetMode(SX127xConfiguration.RegOpModeMode.ReceiveContinuous);
+			SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
 		}
 
 		public void Send(byte[] messageBytes)
@@ -496,25 +496,25 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			lock (_regFifoLock)
 			{
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFifoTxBaseAddr, 0x0);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFifoTxBaseAddr, 0x0);
 
 				// Set the Register Fifo address pointer
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegFifoAddrPtr, 0x0);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegFifoAddrPtr, 0x0);
 
-				_registerManager.WriteBytes((byte)SX127xConfiguration.Registers.RegFifo, messageBytes);
+				_registerManager.WriteBytes((byte)Configuration.Registers.RegFifo, messageBytes);
 
 				// Set the length of the message in the fifo
-				_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegPayloadLength, (byte)messageBytes.Length);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegPayloadLength, (byte)messageBytes.Length);
 			}
 
-			_registerManager.WriteByte((byte)SX127xConfiguration.Registers.RegDioMapping1, (byte)SX127xConfiguration.RegDioMapping1.Dio0TxDone);
-			SetMode(SX127xConfiguration.RegOpModeMode.Transmit);
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
+			SetMode(Configuration.RegOpModeMode.Transmit);
 		}
 
 		public void RegisterDump()
 		{
 			Debug.WriteLine("Register dump");
-			for (byte registerIndex = (byte)SX127xConfiguration.Registers.MinValue; registerIndex <= (byte)SX127xConfiguration.Registers.MaxValue; registerIndex++)
+			for (byte registerIndex = (byte)Configuration.Registers.MinValue; registerIndex <= (byte)Configuration.Registers.MaxValue; registerIndex++)
 			{
 				byte registerValue = _registerManager.ReadByte(registerIndex);
 

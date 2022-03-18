@@ -18,7 +18,7 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
-    <Compile Include="RegisterConfiguration.cs" />
+    <Compile Include="Configuration.cs" />
     <Compile Include="RegisterManager.cs" />
     <Compile Include="SX127XDevice.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
