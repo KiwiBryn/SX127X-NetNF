@@ -90,14 +90,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
-			_gpioController = gpioController;
-
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
 			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
 			if (regVersionValue != Configuration.RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
+
+			_gpioController = gpioController;
 
 			// Interrupt pin for RX message & TX done notification 
 			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
