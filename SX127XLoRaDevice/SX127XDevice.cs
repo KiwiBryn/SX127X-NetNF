@@ -86,11 +86,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 		}
 
-		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin)
+		public SX127XDevice(SpiDevice spiDevice, int interruptPin)
 		{
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
-
-			_gpioController = gpioController;
 
 			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
 			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
