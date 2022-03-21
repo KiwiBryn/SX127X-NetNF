@@ -176,7 +176,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 4, e.Data.Length - 4);
 
-				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[0]:x} From 0x{e.Data[1]:x} Count{e.Data[2]} {e.Data[3]} byte message {messageText}");
+				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[0]:x} From 0x{e.Data[1]:x} Count {e.Data[2]} {e.Data[3]} byte message {messageText}");
 #else
 
 				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 0, e.Data.Length);
