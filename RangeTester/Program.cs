@@ -70,7 +70,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 			// Arduino D2->PA4
 			int interruptPinNumber = PinNumber('J', 1);
 #endif
-			Console.WriteLine("devMobile.IoT.SX127xLoRaDevice Client starting");
+			Console.WriteLine("devMobile.IoT.SX127xLoRaDevice Range Tester starting");
 
 			try
 			{
