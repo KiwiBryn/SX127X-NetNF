@@ -165,7 +165,6 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 			try
 			{
-#if ARDUINO_LORA_DUPLEX
 				for (int index = 4; index < e.Data.Length; index++)
 				{
 					if ((e.Data[index] < 0x20) || (e.Data[index] > 0x7E))
@@ -174,6 +173,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 					}
 				}
 
+#if ARDUINO_LORA_DUPLEX
 				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 4, e.Data.Length - 4);
 
 				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[0]:x} From 0x{e.Data[1]:x} Count {e.Data[2]} {e.Data[3]} byte message {messageText}");
