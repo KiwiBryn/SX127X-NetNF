@@ -30,6 +30,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public RegisterManager(SpiDevice spiDevice, byte registerAddressReadMask, byte registerAddressWriteMask)
 		{
 			_spiDevice = spiDevice;
+
+			_registerAddressReadMask = registerAddressReadMask;
+			_registerAddressWriteMask = registerAddressWriteMask;
 		}
 
 		public Byte ReadByte(byte registerAddress)
