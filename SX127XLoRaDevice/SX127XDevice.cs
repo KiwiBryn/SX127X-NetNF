@@ -60,15 +60,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin, int resetPin)
 		{
-			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
-
-			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
-			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
-			if (regVersionValue != Configuration.RegVersionValueExpected)
-			{
-				throw new ApplicationException("Semtech SX127X not found");
-			}
-
 			_gpioController = gpioController;
 
 			// Factory reset pin configuration
@@ -78,7 +69,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_gpioController.Write(resetPin, PinValue.Low);
 			Thread.Sleep(20);
 			_gpioController.Write(resetPin, PinValue.High);
-			Thread.Sleep(20);
+			Thread.Sleep(50);
+
+			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
+
+			// Once the pins setup check that SX127X chip is present
+			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
+			if (regVersionValue != Configuration.RegVersionValueExpected)
+			{
+				throw new ApplicationException("Semtech SX127X not found");
+			}
 
 			// Interrupt pin for RX message & TX done notification 
 			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
@@ -88,16 +88,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin)
 		{
+			_gpioController = gpioController;
+
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
-			// As soon as ChipSelectLine/ChipSelectLogicalPinNumber check that SX127X chip is present
+			// Once the pins setup check that SX127X chip is present
 			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
 			if (regVersionValue != Configuration.RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
-
-			_gpioController = gpioController;
 
 			// Interrupt pin for RX message & TX done notification 
 			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
@@ -154,7 +154,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_gpioController.Write(_resetPin, PinValue.Low);
 				Thread.Sleep(20);
 				_gpioController.Write(_resetPin, PinValue.High);
-				Thread.Sleep(20);
+				Thread.Sleep(50);
 			}
 
 			// Put the device into sleep mode so registers can be changed
