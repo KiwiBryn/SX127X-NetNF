@@ -47,9 +47,24 @@ namespace devMobile.IoT.SX127x.RangeTester
 		private static SX127XDevice _sx127XDevice;
 		private static GpioController _gpioController;
 
+#if ARDUINO_LORA_DUPLEX
+		private const byte MessageHeaderLength = 4;
+		private const byte MessageHeaderAddressDestinationByte = 0;
+		private const byte MessageHeaderAddressSourceByte = 1;
+		private const byte MessageHeaderCountByte = 2;
+		private const byte MessageHeaderLengthByte = 3;
+
+		private const byte AddressDestinationBroadcast = 0xff;
+
+		private const byte AddressDestination = 0xaa;
+		//private const byte AddressDestination = AddressDestinationBroadcast;
+
+		private const byte AddressLocal = 0x10;
+#endif
+
 		static void Main(string[] args)
 		{
-			int SendCount = 0;
+			byte SendCount = 0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
 			int chipSelectLine = Gpio.IO16;
 			int interruptPinNumber = Gpio.IO26;
@@ -97,7 +112,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					_sx127XDevice.Initialise(Configuration.RegOpModeMode.ReceiveContinuous,
+					_sx127XDevice.Initialise(Configuration.RegOpModeMode.Sleep,
 								Frequency,
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost: true,
@@ -119,14 +134,17 @@ namespace devMobile.IoT.SX127x.RangeTester
 					while (true)
 					{
 #if ARDUINO_LORA_DUPLEX
-						string messageText = $"    Hello LoRa from .NET nanoFramework {SendCount += 1}!";
+						string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
-						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
-						messageBytes[0] = 0xff;
-						messageBytes[1] = 0xcc;
-						messageBytes[2] = (byte)SendCount;
-						messageBytes[3] = (byte)(messageBytes.Length - 4);
-						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText.Substring(4)}");
+						byte[] messageBytes = new byte[messageText.Length + MessageHeaderLength];
+							
+						UTF8Encoding.UTF8.GetBytes(messageText,0,messageText.Length, messageBytes, MessageHeaderLength);
+
+						messageBytes[MessageHeaderAddressDestinationByte] = AddressDestination;
+						messageBytes[MessageHeaderAddressSourceByte] = AddressLocal;
+						messageBytes[MessageHeaderCountByte] = SendCount;
+						messageBytes[MessageHeaderLengthByte] = (byte)(messageBytes.Length - MessageHeaderLength);
+						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
 #else
 						string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
 
@@ -149,7 +167,21 @@ namespace devMobile.IoT.SX127x.RangeTester
 		{
 			try
 			{
-				if ( _gpioController.Read(ledPinNumber) != PinValue.High)
+#if ARDUINO_LORA_DUPLEX
+				if (e.Data.Length < MessageHeaderLength)
+				{
+					Console.WriteLine("Message length invalid");
+					return;
+				}
+
+				if ((e.Data[MessageHeaderAddressDestinationByte] != AddressLocal) && (e.Data[MessageHeaderAddressDestinationByte] != AddressDestinationBroadcast))
+				{
+					Console.WriteLine("Message address invalid");
+					return;
+				}
+#endif
+
+				if (_gpioController.Read(ledPinNumber) != PinValue.High)
 				{
 					_gpioController.Write(ledPinNumber, PinValue.High);
 				}
@@ -166,7 +198,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 			try
 			{
 #if ARDUINO_LORA_DUPLEX
-				for (int index = 4; index < e.Data.Length; index++)
+				for (int index = MessageHeaderLength; index < e.Data.Length; index++)
 				{
 					if ((e.Data[index] < 0x20) || (e.Data[index] > 0x7E))
 					{
@@ -174,9 +206,9 @@ namespace devMobile.IoT.SX127x.RangeTester
 					}
 				}
 
-				string messageText = UTF8Encoding.UTF8.GetString(e.Data, 4, e.Data.Length - 4);
+				string messageText = UTF8Encoding.UTF8.GetString(e.Data, MessageHeaderLength, e.Data.Length - MessageHeaderLength);
 
-				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[0]:x} From 0x{e.Data[1]:x} Count {e.Data[2]} {e.Data[3]} byte message {messageText}");
+				Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX PacketSnr {e.PacketSnr:0.0} Packet RSSI {e.PacketRssi}dBm RSSI {e.Rssi}dBm = To 0x{e.Data[MessageHeaderAddressDestinationByte]:x} From 0x{e.Data[MessageHeaderAddressSourceByte]:x} Count {e.Data[MessageHeaderCountByte]} {e.Data[MessageHeaderLengthByte]} byte message {messageText}");
 #else
 				for (int index = 0; index < e.Data.Length; index++)
 				{
