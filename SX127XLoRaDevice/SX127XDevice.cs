@@ -43,7 +43,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public class OnDataTransmitedEventArgs : EventArgs
 		{
-			public byte[] Data { get; set; }
 		}
 		public delegate void onTransmittedEventHandler(Object sender, OnDataTransmitedEventArgs e);
 		public event onTransmittedEventHandler OnTransmit;
@@ -290,7 +289,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			{
 				// Get the LSB of SymbolTimeout
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);
-				_registerManager.WriteByte((byte)Configuration.Registers.RegSymbTimeout, symbolTimeoutBytes[0]);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegSymbTimeoutLsb, symbolTimeoutBytes[0]);
 			}
 
 			// RegPreambleMsb + RegPreambleLsb

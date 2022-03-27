@@ -27,16 +27,17 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			RegFifo = 0x0,
 			RegOpMode = 0x01,
-			//Reserved 0x02-0x06 
+			//Reserved 0x02-0x05 
 			RegFrMsb = 0x06,
 			RegFrMid = 0x7,
 			RegFrLsb = 0x08,
 			RegPAConfig = 0x09,
-			//RegPARamp = 0x0A, // not included as FSK/OOK functionality
+			//RegPARamp = 0x0A,
 			RegOcp = 0x0B,
 			RegLna = 0x0C,
 			RegFifoAddrPtr = 0x0D,
 			RegFifoTxBaseAddr = 0x0E,
+			RegFifoRxBaseAddr = 0x0F,
 			RegFifoRxCurrent = 0x10,
 			RegIrqFlagsMask = 0x11,
 			RegIrqFlags = 0x12,
@@ -45,37 +46,43 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// RegRxHeaderCntValueLsb=0x15
 			// RegRxPacketCntValueMsb=0x16
 			// RegRxPacketCntValueMsb=0x17
-			// RegModemStat=0x18
+			RegModemStat=0x18,
 			RegPktSnrValue = 0x19,
 			RegPktRssiValue = 0x1A,
 			RegRssiValue = 0x1B,
 			RegHopChannel = 0x1C,
 			RegModemConfig1 = 0x1D,
 			RegModemConfig2 = 0x1E,
-			RegSymbTimeout = 0x1F,
+			RegSymbTimeoutLsb = 0x1F,
 			RegPreambleMsb = 0x20,
 			RegPreambleLsb = 0x21,
 			RegPayloadLength = 0x22,
 			RegMaxPayloadLength = 0x23,
-			RegHopPeriod = 0x24,
-			// RegFifiRxByteAddr = 0x25
+			 RegHopPeriod = 0x24,
+			// RegFifoRxByteAddr = 0x25
 			RegModemConfig3 = 0x26,
 			RegPpmCorrection = 0x27,
 			// RegFeiMsb = 0x28
 			// RegFeiMid = 0x29
 			// RegFeiLsb = 0x2A
 			// Reserved 0x2B
-			// RegRssiWideband = 0x2C
-			// Reserved 0x2D-0x30
+			RegRssiWideband = 0x2C, // Useful for random number generation
+			// Reserved 0x2D-0x2E
+			// RegIifFreq2 = 0x2F
+			// RegIifFreq1 = 0x30
 			RegDetectOptimize = 0x31,
 			// Reserved 0x32
 			RegInvertIQ = 0x33,
-			// Reserved 0x34-0x36
+			// Reserved 0x34-0x35
+			RegHighBwOptimise1 =0x36,
 			RegDetectionThreshold = 0x37,
 			// Reserved 0x38
 			RegSyncWord = 0x39,
+			RegHighBwOptimise2 = 0x3A,
 			RegInvertIQ2 = 0x3B,
+			// Reserved 0x3C-0x3F
 			RegDioMapping1 = 0x40,
+			RegDioMapping2 = 0x41,
 			RegVersion = 0x42,
 			RegPaDac = 0x4d,
 
@@ -110,7 +117,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// Frequency configuration magic numbers from Semtech SX127X specs
 		public const double SX127X_FXOSC = 32000000.0;
-		public const double SX127X_FSTEP = SX127X_FXOSC / 524288.0;
+		public const double SX127X_FSTEP = SX127X_FXOSC / 524288.0; 
 		public const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
 		public const int RssiAdjustmentHF = -157;
 		public const int RssiAdjustmentLF = -164;
