@@ -106,24 +106,23 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public void SetMode(Configuration.RegOpModeMode mode)
 		{
-			byte regOpModeValue;
+			Configuration.RegOpModeModeFlags regOpModeValue;
 
-			regOpModeValue = Configuration.RegOpModeLongRangeModeLoRa;
-			regOpModeValue |= Configuration.RegOpModeAcessSharedRegLoRa;
+			regOpModeValue = Configuration.RegOpModeModeFlags.LongRangeModeLoRa;
+			regOpModeValue |= Configuration.RegOpModeModeFlags.AcessSharedRegLoRa;
 			if (_frequency > Configuration.SX127XMidBandThreshold)
 			{
-				regOpModeValue |= Configuration.RegOpModeLowFrequencyModeOnHighFrequency;
+				regOpModeValue |= Configuration.RegOpModeModeFlags.LowFrequencyModeOnHighFrequency;
 			}
 			else
 			{
-				regOpModeValue |= Configuration.RegOpModeLowFrequencyModeOnLowFrequency;
+				regOpModeValue |= Configuration.RegOpModeModeFlags.LowFrequencyModeOnLowFrequency;
 			}
-			regOpModeValue |= (byte)mode;
-			_registerManager.WriteByte((byte)Configuration.Registers.RegOpMode, regOpModeValue);
+			regOpModeValue |= (Configuration.RegOpModeModeFlags)mode;
+			_registerManager.WriteByte((byte)Configuration.Registers.RegOpMode, (byte)regOpModeValue);
 		}
 
-		public void Initialise(Configuration.RegOpModeMode modeAfterInitialise, // RegOpMode
-			double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
+		public void Initialise( double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.PowerAmplifier powerAmplifier = Configuration.PowerAmplifierDefault, // RegPAConfig & RegPaDac
 			bool ocpOn = Configuration.RegOcpDefault, byte ocpTrim = Configuration.RegOcpOcpTrimDefault, // RegOcp
@@ -377,9 +376,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			// TODO revist this split & move to onReceive function
 			_registerManager.WriteByte(0x40, 0b00000000); // RegDioMapping1 0b00000000 DI0 RxReady & TxReady
-
-			// Configure RegOpMode before returning
-			SetMode(modeAfterInitialise);
 		}
 
 		private void ProcessTxDone(byte IrqFlags)

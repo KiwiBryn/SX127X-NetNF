@@ -88,8 +88,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					sx127XDevice.Initialise(Configuration.RegOpModeMode.ReceiveContinuous,
-								Frequency,
+					sx127XDevice.Initialise(
+						      Frequency,
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost:true,
 								powerAmplifier: Configuration.PowerAmplifier.PABoost,

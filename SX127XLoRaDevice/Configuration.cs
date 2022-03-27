@@ -90,19 +90,20 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		}
 
 		// RegOpMode mode flags
-		public const byte RegOpModeLongRangeModeLoRa = 0b10000000;
-		public const byte RegOpModeLongRangeModeFskOok = 0b00000000;
-		public const byte RegOpModeLongRangeModeDefault = RegOpModeLongRangeModeFskOok;
-
-		public const byte RegOpModeAcessSharedRegLoRa = 0b00000000;
-		public const byte RegOpModeAcessSharedRegFsk = 0b01000000;
-		public const byte RegOpModeAcessSharedRegDefault = RegOpModeAcessSharedRegLoRa;
-
-		public const byte RegOpModeLowFrequencyModeOnHighFrequency = 0b00000000;
-		public const byte RegOpModeLowFrequencyModeOnLowFrequency = 0b00001000;
-		public const byte RegOpModeLowFrequencyModeOnDefault = RegOpModeLowFrequencyModeOnLowFrequency;
-
 		[Flags]
+		public enum RegOpModeModeFlags : byte
+		{
+			LongRangeModeLoRa = 0b10000000,
+			LongRangeModeFskOok = 0b00000000,
+			LongRangeModeDefault = LongRangeModeFskOok,
+			AcessSharedRegLoRa = 0b00000000,
+			AcessSharedRegFsk = 0b01000000,
+			AcessSharedRegDefault = AcessSharedRegLoRa,
+			LowFrequencyModeOnHighFrequency = 0b00000000,
+			LowFrequencyModeOnLowFrequency = 0b00001000,
+			LowFrequencyModeOnDefault= LowFrequencyModeOnLowFrequency
+		}
+
 		public enum RegOpModeMode : byte
 		{
 			Sleep = 0b00000000,

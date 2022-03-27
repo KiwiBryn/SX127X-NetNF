@@ -17,7 +17,7 @@
 #define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 //#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
-//#define ARDUINO_LORA_DUPLEX
+#define ARDUINO_LORA_DUPLEX
 namespace devMobile.IoT.SX127x.RangeTester
 {
 	using System;
@@ -112,7 +112,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					_sx127XDevice.Initialise(Configuration.RegOpModeMode.Sleep,
+					_sx127XDevice.Initialise(
 								Frequency,
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost: true,
