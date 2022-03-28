@@ -46,7 +46,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// RegRxHeaderCntValueLsb=0x15
 			// RegRxPacketCntValueMsb=0x16
 			// RegRxPacketCntValueMsb=0x17
-			RegModemStat=0x18,
+			RegModemStat = 0x18,
 			RegPktSnrValue = 0x19,
 			RegPktRssiValue = 0x1A,
 			RegRssiValue = 0x1B,
@@ -74,7 +74,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Reserved 0x32
 			RegInvertIQ = 0x33,
 			// Reserved 0x34-0x35
-			RegHighBwOptimise1 =0x36,
+			RegHighBwOptimise1 = 0x36,
 			RegDetectionThreshold = 0x37,
 			// Reserved 0x38
 			RegSyncWord = 0x39,
@@ -161,14 +161,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		[Flags]
 		public enum RegLnaLnaGain : byte
 		{
-			G1 = 0b00000001,
-			G2 = 0b00000010,
-			G3 = 0b00000011,
-			G4 = 0b00000100,
-			G5 = 0b00000101,
-			G6 = 0b00000110
+			G1 = 0b00100000,
+			G2 = 0b01000000,
+			G3 = 0b01100000,
+			G4 = 0b10000000,
+			G5 = 0b10100000,
+			G6 = 0b11000000
 		}
-		// Note the gain is backwards less = more
 		public const RegLnaLnaGain LnaGainDefault = RegLnaLnaGain.G1;
 		public const bool LnaBoostDefault = false;
 
