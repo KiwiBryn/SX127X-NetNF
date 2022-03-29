@@ -231,9 +231,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegLna if any of the settings not defaults
-			if ((lnaGain != Configuration.LnaGainDefault) || (lnaBoost != false))
+			if ((lnaGain != Configuration.LnaGainDefault) || (lnaBoost != Configuration.LnaBoostDefault))
 			{
 				byte regLnaValue = (byte)lnaGain;
+
+				regLnaValue |= Configuration.RegLnaLnaBoostLfDefault;
+				regLnaValue |= Configuration.RegLnaLnaBoostHfDefault;
+
 				if (lnaBoost)
 				{
 					if (_frequency > Configuration.SX127XMidBandThreshold)
