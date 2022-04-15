@@ -122,10 +122,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_registerManager.WriteByte((byte)Configuration.Registers.RegOpMode, (byte)regOpModeValue);
 		}
 
-		public void Initialise( double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
+		public void Initialise(double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
-			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.PowerAmplifier powerAmplifier = Configuration.PowerAmplifierDefault, // RegPAConfig & RegPaDac
-			bool ocpOn = Configuration.RegOcpDefault, byte ocpTrim = Configuration.RegOcpOcpTrimDefault, // RegOcp
+			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
+			Configuration.RegOcp ocpOn = Configuration.RegOcpDefault, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpOcpTrimDefault, // RegOcp
 			Configuration.RegLnaLnaGain lnaGain = Configuration.LnaGainDefault, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidthDefault, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRateDefault, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
 			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
@@ -167,66 +167,74 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_registerManager.WriteByte((byte)Configuration.Registers.RegFrLsb, bytes[0]);
 			}
 
-			// Validate the OutputPower
-			if (powerAmplifier == Configuration.PowerAmplifier.Rfo)
+			// Set RegPAConfig & RegPaDac if powerAmplifier/OutputPower settings not defaults
+			if ((powerAmplifier != Configuration.RegPAConfigPASelect.Default) || (outputPower != Configuration.OutputPowerDefault))
 			{
-				if ((outputPower < Configuration.OutputPowerRfoMin) || (outputPower > Configuration.OutputPowerRfoMax))
+				if (powerAmplifier == Configuration.RegPAConfigPASelect.PABoost)
 				{
-					throw new ArgumentException($"outputPower must be between {Configuration.OutputPowerRfoMin} and {Configuration.OutputPowerRfoMax}", nameof(outputPower));
-				}
-			}
-			if (powerAmplifier == Configuration.PowerAmplifier.PABoost)
-			{
-				if ((outputPower < Configuration.OutputPowerPABoostMin) || (outputPower > Configuration.OutputPowerPABoostMax))
-				{
-					throw new ArgumentException($"outputPower must be between {Configuration.OutputPowerPABoostMin} and {Configuration.OutputPowerPABoostMax}", nameof(outputPower));
-				}
-			}
+					byte regPAConfigValue = (byte)Configuration.RegPAConfigPASelect.PABoost;
 
-			if ((powerAmplifier != Configuration.PowerAmplifierDefault) || (outputPower != Configuration.OutputPowerDefault))
-			{
-				byte regPAConfigValue = Configuration.RegPAConfigMaxPowerMax;
-
-				if (powerAmplifier == Configuration.PowerAmplifier.Rfo)
-				{
-					regPAConfigValue |= Configuration.RegPAConfigPASelectRfo;
-
-					regPAConfigValue |= (byte)(outputPower + 1);
-
-					_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
-				}
-
-				if (powerAmplifier == Configuration.PowerAmplifier.PABoost)
-				{
-					regPAConfigValue |= Configuration.RegPAConfigPASelectPABoost;
-
-					if (outputPower > Configuration.RegPaDacPABoostThreshold)
+					// Validate the minimum and maximum PABoost outputpower
+					if ((outputPower < Configuration.OutputPowerPABoostMin) || (outputPower > Configuration.OutputPowerPABoostMax))
 					{
-						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Boost);
+						throw new ApplicationException($"PABoost {outputPower}dBm Min power {Configuration.OutputPowerPABoostMin} to Max power {Configuration.OutputPowerPABoostMax}");
+					}
 
-						regPAConfigValue |= (byte)(outputPower - 8);
+					if (outputPower < Configuration.OutputPowerPABoostPaDacThreshhold)
+					{
+						// outputPower 0..15 so pOut is 2=17-(15-0)...17=17-(15-15)
+						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Default;
+						regPAConfigValue |= (byte)(outputPower - 2);
 
 						_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
 					}
 					else
 					{
-						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
-
+						// outputPower 0..15 so pOut is 5=20-(15-0)...20=20-(15-15) // See https://github.com/adafruit/RadioHead/blob/master/RH_RF95.cpp around line 411 could be 23dBm
+						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Default;
 						regPAConfigValue |= (byte)(outputPower - 5);
 
 						_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
+						_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Boost);
 					}
+				}
+				else
+				{
+					byte regPAConfigValue = (byte)Configuration.RegPAConfigPASelect.Rfo;
+
+					// Validate the minimum and maximum RFO outputPower
+					if ((outputPower < Configuration.OutputPowerRfoMin) || (outputPower > Configuration.OutputPowerRfoMax))
+					{
+						throw new ApplicationException($"RFO {outputPower}dBm Min power {Configuration.OutputPowerRfoMin} to Max power {Configuration.OutputPowerRfoMax}");
+					}
+
+					// Set MaxPower and Power calculate pOut = PMax-(15-outputPower), pMax=10.8 + 0.6*MaxPower 
+					if (outputPower > Configuration.OutputPowerRfoThreshhold)
+					{
+						// pMax 15=10.8+0.6*7 with outputPower 0...15 so pOut is 15=pMax-(15-0)...0=pMax-(15-15) 
+						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Max;
+						regPAConfigValue |= (byte)(outputPower + 0);
+					}
+					else
+					{
+						// pMax 10.8=10.8+0.6*0 with output power 0..15 so pOut is -4=10-(15-0)...10.8=10.8-(15-15)
+						 regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Min;
+						regPAConfigValue |= (byte)(outputPower + 4);
+					}
+
+					_registerManager.WriteByte((byte)Configuration.Registers.RegPAConfig, regPAConfigValue);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
 				}
 			}
 
 			// Set RegOcp if any of the settings not defaults
-			if ((ocpOn != true) || (ocpTrim != Configuration.RegOcpOcpTrimDefault))
+			if ((ocpOn != Configuration.RegOcpDefault) || (ocpTrim != Configuration.RegOcpOcpTrimDefault))
 			{
-				byte regOcpValue = ocpTrim;
-				if (ocpOn)
-				{
-					regOcpValue |= Configuration.RegOcpOn;
-				}
+				byte regOcpValue = (byte)ocpTrim;
+
+				regOcpValue |= (byte)ocpOn;
+
 				_registerManager.WriteByte((byte)Configuration.Registers.RegOcp, regOcpValue);
 			}
 

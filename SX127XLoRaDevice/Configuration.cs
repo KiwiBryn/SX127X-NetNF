@@ -127,35 +127,76 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public const double FrequencyDefault = 434000000.0;
 
 		// RegPAConfig based RegPAConfigPADac with complexity hidden from user 
-		public const Byte RegPAConfigPASelectRfo = 0b00000000;
-		public const Byte RegPAConfigPASelectPABoost = 0b10000000;
-		public const byte RegPAConfigMaxPowerMax = 0b01110000;
-
-		public enum PowerAmplifier
+		public enum RegPAConfigPASelect:byte
 		{
-			Rfo,
-			PABoost
+			Rfo = 0b00000000,
+			PABoost = 0b10000000,
+			Default = Rfo
 		}
-		public const PowerAmplifier PowerAmplifierDefault = PowerAmplifier.Rfo;
 
-		public const sbyte OutputPowerDefault = 0x0F;
+		public enum RegPAConfigMaxPower:byte
+		{
+			Min = 0b00000000,
+			Max = 0b01110000,
+			Default = 0b01000000
+		}
+		public const sbyte OutputPowerDefault = 13;
 
 		// Validation constants for outputpower param
-		public const sbyte OutputPowerPABoostMin = 5;
-		public const sbyte OutputPowerPABoostMax = 23;
-		public const sbyte OutputPowerRfoMin = -1;
-		public const sbyte OutputPowerRfoMax = 14;
+		public const sbyte OutputPowerPABoostMin = 2;
+		public const sbyte OutputPowerPABoostMax = 20;
+		public const sbyte OutputPowerPABoostPaDacThreshhold = 17;
+
+		public const sbyte OutputPowerRfoMin = -4;
+		public const sbyte OutputPowerRfoMax = 15;
+		public const sbyte OutputPowerRfoThreshhold = 0;
 
 		// RegPaRamp appears to be for FSK only ?
 
 		// RegOcp
-		public const byte RegOcpOn = 0b00100000;
-		public const byte RegOcpOff = 0b00000000;
-		public const bool RegOcpDefault = true;
+		public enum RegOcp
+		{
+			On = 0b00100000,
+			Off = 0b00000000
+		}
+		public const RegOcp RegOcpDefault = RegOcp.On;
 
-		public const byte RegOcpOcpTrimMin = 0b00000000;
-		public const byte RegOcpOcpTrimMax = 0b00011111;
-		public const byte RegOcpOcpTrimDefault = 0b00001011;
+		// RegOcpTrim
+		public enum RegOcpTrim
+		{
+			Min  = _45mA,
+			_45mA = 0x00,
+			_50mA = 0x01,
+			_55mA = 0x02,
+			_60mA = 0x03,
+			_65mA = 0x04,
+			_70mA = 0x05,
+			_75mA = 0x06,
+			_80mA = 0x07,
+			_85mA = 0x08,
+			_90mA = 0x09,
+			_95mA = 0x0A,
+			_100mA = 0x0B,  // Default
+			RegOcpOcpTrimDefault = _100mA,
+			_105mA = 0x0C,
+			_110mA = 0x0D,
+			_115mA = 0x0E,
+			_120mA = 0x0F,
+			_130mA = 0x10,
+			_140mA = 0x11,
+			_150mA = 0x12,
+			_160mA = 0x13,
+			_170mA = 0x14,
+			_180mA = 0x15,
+			_190mA = 0x16,
+			_200mA = 0x17,
+			_210mA = 0x18,
+			_220mA = 0x19,
+			_230mA = 0x1A,
+			_240mA = 0x1B,
+			RegOcpOcpTrimMax = _240mA
+		};
+		public const RegOcpTrim RegOcpOcpTrimDefault = RegOcpTrim._100mA;
 
 		// RegLna
 		[Flags]
@@ -356,8 +397,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		[Flags]
 		public enum RegPaDac
 		{
-			Normal = 0b10000100,
-			Boost = 0b10000111,
+			Normal = 0x84,
+			Boost = 0x87,
+			Default = Normal
 		}
 		public const byte RegPaDacPABoostThreshold = 20;
 	}

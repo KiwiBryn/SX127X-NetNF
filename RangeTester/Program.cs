@@ -116,7 +116,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 								Frequency,
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost: true,
-								powerAmplifier: Configuration.PowerAmplifier.PABoost,
+								powerAmplifier: Configuration.RegPAConfigPASelect.PABoost,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
