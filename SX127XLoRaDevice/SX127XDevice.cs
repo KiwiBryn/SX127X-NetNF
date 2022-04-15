@@ -125,7 +125,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public void Initialise(double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
-			Configuration.RegOcp ocpOn = Configuration.RegOcpDefault, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpOcpTrimDefault, // RegOcp
+			Configuration.RegOcp ocpOn = Configuration.RegOcp.Default, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpTrim.Default, // RegOcp
 			Configuration.RegLnaLnaGain lnaGain = Configuration.LnaGainDefault, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidthDefault, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRateDefault, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
 			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
@@ -229,7 +229,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegOcp if any of the settings not defaults
-			if ((ocpOn != Configuration.RegOcpDefault) || (ocpTrim != Configuration.RegOcpOcpTrimDefault))
+			if ((ocpOn != Configuration.RegOcp.Default) || (ocpTrim != Configuration.RegOcpTrim.Default))
 			{
 				byte regOcpValue = (byte)ocpTrim;
 

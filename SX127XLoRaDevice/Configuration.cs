@@ -157,9 +157,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public enum RegOcp
 		{
 			On = 0b00100000,
-			Off = 0b00000000
+			Off = 0b00000000,
+			Default = On
 		}
-		public const RegOcp RegOcpDefault = RegOcp.On;
 
 		// RegOcpTrim
 		public enum RegOcpTrim
@@ -176,8 +176,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_85mA = 0x08,
 			_90mA = 0x09,
 			_95mA = 0x0A,
-			_100mA = 0x0B,  // Default
-			RegOcpOcpTrimDefault = _100mA,
+			_100mA = 0x0B,  
+			Default = _100mA,
 			_105mA = 0x0C,
 			_110mA = 0x0D,
 			_115mA = 0x0E,
@@ -196,7 +196,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_240mA = 0x1B,
 			RegOcpOcpTrimMax = _240mA
 		};
-		public const RegOcpTrim RegOcpOcpTrimDefault = RegOcpTrim._100mA;
 
 		// RegLna
 		[Flags]
