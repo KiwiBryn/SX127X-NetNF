@@ -42,7 +42,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		static void Main(string[] args)
 		{
-			int SendCount = 0;
+			int sendCount = 0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
 			int chipSelectLine = Gpio.IO16;
 			int interruptPinNumber = Gpio.IO26;
@@ -88,13 +88,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber, resetPinNumber);
 #endif
 
-					sx127XDevice.Initialise(
-						      Frequency,
-								lnaGain: Configuration.RegLnaLnaGain.G3,
-								lnaBoost:true,
-								powerAmplifier: Configuration.PowerAmplifier.PABoost,
-								rxPayloadCrcOn: true,
-								rxDoneignoreIfCrcMissing: false
+					sx127XDevice.Initialise(Frequency
+								, lnaGain: Configuration.RegLnaLnaGain.G3
+								, lnaBoost: true
+								, powerAmplifier: Configuration.PowerAmplifier.PABoost
+								, rxPayloadCrcOn: true
+								, rxDoneignoreIfCrcMissing: false
 								);
 
 #if DEBUG
@@ -109,7 +108,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 					while (true)
 					{
-						string messageText = $"Hello LoRa from .NET nanoFramework {SendCount += 1}!";
+						string messageText = $"Hello LoRa from .NET nanoFramework Count {sendCount = +1}!";
 
 						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
 						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
