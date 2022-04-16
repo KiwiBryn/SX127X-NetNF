@@ -202,13 +202,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public enum RegLnaLnaGain : byte
 		{
 			G1 = 0b00100000,
+			Default = G1,
 			G2 = 0b01000000,
 			G3 = 0b01100000,
 			G4 = 0b10000000,
 			G5 = 0b10100000,
 			G6 = 0b11000000
 		}
-		public const RegLnaLnaGain LnaGainDefault = RegLnaLnaGain.G1;
 		public const bool LnaBoostDefault = false;
 
 		public const byte RegLnaLnaBoostLfOn = 0b00011000;

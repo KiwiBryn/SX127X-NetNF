@@ -89,9 +89,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 #endif
 
 					sx127XDevice.Initialise(Frequency
-								, lnaGain: Configuration.RegLnaLnaGain.G3
+								, lnaGain: Configuration.RegLnaLnaGain.Default
 								, lnaBoost: true
-								, powerAmplifier: Configuration.RegPAConfigPASelect.PABoost
+								, powerAmplifier: Configuration.RegPAConfigPASelect.PABoost							
 								, rxPayloadCrcOn: true
 								, rxDoneignoreIfCrcMissing: false
 								);
@@ -108,7 +108,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 					while (true)
 					{
-						string messageText = $"Hello LoRa from .NET nanoFramework Count {sendCount = +1}!";
+						string messageText = $"Hello LoRa from .NET nanoFramework Count {sendCount+=1}!";
 
 						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
 						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");

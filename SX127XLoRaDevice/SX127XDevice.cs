@@ -126,7 +126,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			Configuration.RegOcp ocpOn = Configuration.RegOcp.Default, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpTrim.Default, // RegOcp
-			Configuration.RegLnaLnaGain lnaGain = Configuration.LnaGainDefault, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
+			Configuration.RegLnaLnaGain lnaGain = Configuration.RegLnaLnaGain.Default, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidthDefault, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRateDefault, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
 			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
@@ -219,7 +219,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					else
 					{
 						// pMax 10.8=10.8+0.6*0 with output power 0..15 so pOut is -4=10-(15-0)...10.8=10.8-(15-15)
-						 regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Min;
+						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Min;
 						regPAConfigValue |= (byte)(outputPower + 4);
 					}
 
@@ -239,7 +239,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegLna if any of the settings not defaults
-			if ((lnaGain != Configuration.LnaGainDefault) || (lnaBoost != Configuration.LnaBoostDefault))
+			if ((lnaGain != Configuration.RegLnaLnaGain.Default) || (lnaBoost != Configuration.LnaBoostDefault))
 			{
 				byte regLnaValue = (byte)lnaGain;
 
