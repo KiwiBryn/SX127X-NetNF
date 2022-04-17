@@ -382,7 +382,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// RegDioMapping1 
 		[Flags]
-		public enum RegDioMapping1
+		internal enum RegDioMapping1
 		{
 			Dio0RxDone = 0b00000000,
 			Dio0TxDone = 0b01000000,
@@ -390,16 +390,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		}
 
 		// The Semtech ID Relating to the Silicon revision
-		public const byte RegVersionValueExpected = 0x12;
+		internal const byte RegVersionValueExpected = 0x12;
 
 		// RegPaDac more power
 		[Flags]
-		public enum RegPaDac
+		internal enum RegPaDac
 		{
 			Normal = 0x84,
 			Boost = 0x87,
 			Default = Normal
 		}
-		public const byte RegPaDacPABoostThreshold = 20;
+		internal const byte RegPaDacPABoostThreshold = 20;
 	}
 }
