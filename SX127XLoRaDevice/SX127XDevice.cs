@@ -521,7 +521,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public void RegisterDump()
 		{
 			Debug.WriteLine("Register dump");
-			for (byte registerIndex = (byte)Configuration.Registers.MinValue; registerIndex <= (byte)Configuration.Registers.MaxValue; registerIndex++)
+			for (byte registerIndex = (byte)Configuration.Registers.Minimum; registerIndex <= (byte)Configuration.Registers.Maximum; registerIndex++)
 			{
 				byte registerValue = _registerManager.ReadByte(registerIndex);
 

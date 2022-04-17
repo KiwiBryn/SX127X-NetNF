@@ -20,10 +20,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// Registers from SemTech SX127X Datasheet
-		public enum Registers : byte
+		// Registers from Semtech SX127X Datasheet
+		internal enum Registers : byte
 		{
-			MinValue = RegOpMode,
+			Minimum = RegOpMode,
 
 			RegFifo = 0x0,
 			RegOpMode = 0x01,
@@ -86,12 +86,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegVersion = 0x42,
 			RegPaDac = 0x4d,
 
-			MaxValue = RegPaDac,
+			Maximum = RegPaDac,
 		}
 
 		// RegOpMode mode flags
 		[Flags]
-		public enum RegOpModeModeFlags : byte
+		internal enum RegOpModeModeFlags : byte
 		{
 			LongRangeModeLoRa = 0b10000000,
 			LongRangeModeFskOok = 0b00000000,
@@ -117,16 +117,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		};
 
 		// Frequency configuration magic numbers from Semtech SX127X specs
-		public const double SX127X_FXOSC = 32000000.0;
-		public const double SX127X_FSTEP = SX127X_FXOSC / 524288.0; 
-		public const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
-		public const int RssiAdjustmentHF = -157;
-		public const int RssiAdjustmentLF = -164;
+		internal const double SX127X_FXOSC = 32000000.0;
+		internal const double SX127X_FSTEP = SX127X_FXOSC / 524288.0;
+		internal const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
+		internal const int RssiAdjustmentHF = -157;
+		internal const int RssiAdjustmentLF = -164;
 
 		// RegFrMsb, RegFrMid, RegFrLsb
 		public const double FrequencyDefault = 434000000.0;
 
-		// RegPAConfig based RegPAConfigPADac with complexity hidden from user 
+		// RegPAConfig based RegPaDac with complexity hidden from user 
 		public enum RegPAConfigPASelect:byte
 		{
 			Rfo = 0b00000000,
@@ -134,7 +134,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			Default = Rfo
 		}
 
-		public enum RegPAConfigMaxPower:byte
+		internal enum RegPAConfigMaxPower:byte
 		{
 			Min = 0b00000000,
 			Max = 0b01110000,
@@ -145,11 +145,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// Validation constants for outputpower param
 		public const sbyte OutputPowerPABoostMin = 2;
 		public const sbyte OutputPowerPABoostMax = 20;
-		public const sbyte OutputPowerPABoostPaDacThreshhold = 17;
+		internal const sbyte OutputPowerPABoostPaDacThreshhold = 17;
 
 		public const sbyte OutputPowerRfoMin = -4;
 		public const sbyte OutputPowerRfoMax = 15;
-		public const sbyte OutputPowerRfoThreshhold = 0;
+		internal const sbyte OutputPowerRfoThreshhold = 0;
 
 		// RegPaRamp appears to be for FSK only ?
 
@@ -164,7 +164,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegOcpTrim
 		public enum RegOcpTrim
 		{
-			Min  = _45mA,
+			Minimum  = _45mA,
 			_45mA = 0x00,
 			_50mA = 0x01,
 			_55mA = 0x02,
@@ -194,7 +194,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_220mA = 0x19,
 			_230mA = 0x1A,
 			_240mA = 0x1B,
-			RegOcpOcpTrimMax = _240mA
+			Maximum = _240mA
 		};
 
 		// RegLna
