@@ -386,7 +386,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			Dio0RxDone = 0b00000000,
 			Dio0TxDone = 0b01000000,
-			Dio0CadDone = 0b1000000,
+			Dio0CadDone = 0b10000000,
 		}
 
 		// The Semtech ID Relating to the Silicon revision
