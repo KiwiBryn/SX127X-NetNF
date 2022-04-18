@@ -101,7 +101,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 #endif
 
 					sx127XDevice.OnReceive += SX127XDevice_OnReceive;
-					sx127XDevice.Receive();
+					sx127XDevice.Receive(); 
 					sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
 
 					Thread.Sleep(500);
@@ -149,7 +149,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		private static void SX127XDevice_OnTransmit(object sender, SX127XDevice.OnDataTransmitedEventArgs e)
 		{
-			sx127XDevice.SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
+			sx127XDevice.Receive();
 
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
 		}
