@@ -143,12 +143,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public const sbyte OutputPowerDefault = 13;
 
 		// Validation constants for outputpower param
-		public const sbyte OutputPowerPABoostMin = 2;
-		public const sbyte OutputPowerPABoostMax = 20;
+		internal const sbyte OutputPowerPABoostMin = 2;
+		internal const sbyte OutputPowerPABoostMax = 20;
 		internal const sbyte OutputPowerPABoostPaDacThreshhold = 17;
 
-		public const sbyte OutputPowerRfoMin = -4;
-		public const sbyte OutputPowerRfoMax = 15;
+		internal const sbyte OutputPowerRfoMin = -4;
+		internal const sbyte OutputPowerRfoMax = 15;
 		internal const sbyte OutputPowerRfoThreshhold = 0;
 
 		// RegPaRamp appears to be for FSK only ?
@@ -211,16 +211,19 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		}
 		public const bool LnaBoostDefault = false;
 
-		public const byte RegLnaLnaBoostLfOn = 0b00011000;
-		public const byte RegLnaLnaBoostLfOff = 0b00000000;
-		public const byte RegLnaLnaBoostLfDefault = RegLnaLnaBoostLfOff;
-
-		public const byte RegLnaLnaBoostHfOn = 0b00000011;
-		public const byte RegLnaLnaBoostHfOff = 0b00000000;
-		public const byte RegLnaLnaBoostHfDefault = RegLnaLnaBoostHfOff;
+		[Flags]
+		internal enum RegLnaLnaBoost : byte
+		{
+			LfOn = 0b00011000,
+			LfOff = 0b00000000,
+			LfDefault = LfOff,
+			HfOn = 0b00000011,
+			HfOff = 0b00000000,
+			HfDefault = HfOff
+		}
 
 		[Flags]
-		public enum RegIrqFlagsMask : byte
+		internal enum RegIrqFlagsMask : byte
 		{
 			RxTimeoutMask = 0b10000000,
 			RxDoneMask = 0b01000000,
@@ -233,7 +236,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		}
 
 		[Flags]
-		public enum RegIrqFlags : byte
+		internal enum RegIrqFlags : byte
 		{
 			RxTimeout = 0b10000000,
 			RxDone = 0b01000000,

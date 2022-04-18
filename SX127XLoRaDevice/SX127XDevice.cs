@@ -243,18 +243,18 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			{
 				byte regLnaValue = (byte)lnaGain;
 
-				regLnaValue |= Configuration.RegLnaLnaBoostLfDefault;
-				regLnaValue |= Configuration.RegLnaLnaBoostHfDefault;
+				regLnaValue |= (byte)Configuration.RegLnaLnaBoost.LfDefault;
+				regLnaValue |= (byte)Configuration.RegLnaLnaBoost.HfDefault;
 
 				if (lnaBoost)
 				{
 					if (_frequency > Configuration.SX127XMidBandThreshold)
 					{
-						regLnaValue |= Configuration.RegLnaLnaBoostHfOn;
+						regLnaValue |= (byte)Configuration.RegLnaLnaBoost.HfOn;
 					}
 					else
 					{
-						regLnaValue |= Configuration.RegLnaLnaBoostLfOn;
+						regLnaValue |= (byte)Configuration.RegLnaLnaBoost.LfOn;
 					}
 				}
 				_registerManager.WriteByte((byte)Configuration.Registers.RegLna, regLnaValue);
