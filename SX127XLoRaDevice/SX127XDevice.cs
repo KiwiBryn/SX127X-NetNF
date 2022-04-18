@@ -385,10 +385,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			{
 				_registerManager.WriteByte((byte)Configuration.Registers.RegSyncWord, syncWord);
 			}
-
-			// TODO revist this split & move to onReceive function
-			_registerManager.WriteByte(0x40, 0b00000000); // RegDioMapping1 0b00000000 DI0 RxReady & TxReady
-		}
+                                                                      		}
 
 		private void ProcessTxDone(byte IrqFlags)
 		{
@@ -486,7 +483,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				ProcessTxDone(IrqFlags);
 			}
 
-			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
 			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ClearAll);
 		}
 
