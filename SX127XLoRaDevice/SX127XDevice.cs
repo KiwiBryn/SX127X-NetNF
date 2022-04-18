@@ -385,7 +385,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			{
 				_registerManager.WriteByte((byte)Configuration.Registers.RegSyncWord, syncWord);
 			}
-                                                                      		}
+		}
 
 		private void ProcessTxDone(byte IrqFlags)
 		{
@@ -488,6 +488,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public void Receive()
 		{
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
 			SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
 		}
 
