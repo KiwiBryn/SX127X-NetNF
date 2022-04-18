@@ -56,10 +56,10 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 		private const byte AddressDestinationBroadcast = 0xff;
 
-		private const byte AddressDestination = 0xaa;
-		//private const byte AddressDestination = AddressDestinationBroadcast;
+		//private const byte AddressDestination = 0xaa;
+		private const byte AddressDestination = AddressDestinationBroadcast;
 
-		private const byte AddressLocal = 0x10;
+		private const byte AddressLocal = 0xbb;
 #endif
 
 		static void Main(string[] args)
@@ -153,7 +153,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 #endif
 						_sx127XDevice.Send(messageBytes);
 
-						Thread.Sleep(30000);
+						Thread.Sleep(5000);
 					}
 				}
 			}
@@ -232,7 +232,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 		private static void SX127XDevice_OnTransmit(object sender, SX127XDevice.OnDataTransmitedEventArgs e)
 		{
-			_sx127XDevice.SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
+			_sx127XDevice.Receive();
 
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
 		}
