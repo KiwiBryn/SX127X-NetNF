@@ -250,13 +250,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		}
 
 		[Flags]
-		public enum RegHopChannelFlags : byte
+		internal enum RegHopChannelFlags : byte
 		{
 			PllTimeout = 0b10000000,
 			CrcOnPayload = 0b01000000,
 		}
 
-		public enum RegHopChannelMask : byte
+		internal enum RegHopChannelMask : byte
 		{
 			PllTimeout = 0b10000000,
 			CrcOnPayload = 0b01000000,
@@ -274,39 +274,39 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_41_7KHz = 0b01010000,
 			_62_5KHz = 0b01100000,
 			_125KHz = 0b01110000,
+			Default = _125KHz,
 			_250KHz = 0b10000000,
 			_500KHz = 0b10010000
 		}
-		public const RegModemConfigBandwidth RegModemConfigBandwidthDefault = RegModemConfigBandwidth._125KHz;
 
 		public enum RegModemConfigCodingRate
 		{
 			_4of5 = 0b00000010,
+			Default = _4of5,
 			_4of6 = 0b00000100,
 			_4of7 = 0b00000110,
 			_4of8 = 0b00001000,
 		}
-		public const RegModemConfigCodingRate RegModemConfigCodingRateDefault = RegModemConfigCodingRate._4of5;
 
 		public enum RegModemConfigImplicitHeaderModeOn
 		{
 			ExplicitHeaderMode = 0b00000000,
+			Default = ExplicitHeaderMode,
 			ImplicitHeaderMode = 0b00000001,
 		}
-		public const RegModemConfigImplicitHeaderModeOn RegModemConfigImplicitHeaderModeOnDefault = RegModemConfigImplicitHeaderModeOn.ExplicitHeaderMode;
 
 		// RegModemConfig2
 		public enum RegModemConfig2SpreadingFactor : byte
 		{
 			_64ChipsPerSymbol = 0b01100000,
 			_128ChipsPerSymbol = 0b01110000,
+			Default = _128ChipsPerSymbol,
 			_256ChipsPerSymbol = 0b10000000,
 			_512ChipsPerSymbol = 0b10010000,
 			_1024ChipsPerSymbol = 0b10100000,
 			_2048ChipsPerSymbol = 0b10110000,
 			_4096ChipsPerSymbol = 0b11000000,
 		}
-		public const RegModemConfig2SpreadingFactor RegModemConfig2SpreadingFactorDefault = RegModemConfig2SpreadingFactor._128ChipsPerSymbol;
 
 		public const byte RegModemConfig2TxContinuousModeOn = 0b00001000;
 		public const byte RegModemConfig2TxContinuousModeOff = 0b00000000;
