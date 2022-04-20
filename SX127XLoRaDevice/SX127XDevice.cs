@@ -469,18 +469,18 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
 		{
 			// Read RegIrqFlags to see what caused the interrupt
-			Byte IrqFlags = _registerManager.ReadByte((byte)Configuration.Registers.RegIrqFlags);
+			Byte irqFlags = _registerManager.ReadByte((byte)Configuration.Registers.RegIrqFlags);
 
 			// Check RxDone for inbound message
-			if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
 			{
-				ProcessRxDone(IrqFlags);
+				ProcessRxDone(irqFlags);
 			}
 
 			// Check TxDone for outbound message
-			if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
 			{
-				ProcessTxDone(IrqFlags);
+				ProcessTxDone(irqFlags);
 			}
 
 			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ClearAll);
@@ -513,6 +513,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
 			SetMode(Configuration.RegOpModeMode.Transmit);
+		}
+
+		public byte Random()
+		{
+			return _registerManager.ReadByte((byte)Configuration.Registers.RegRssiWideband);
 		}
 
 		public void RegisterDump()

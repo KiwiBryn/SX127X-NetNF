@@ -115,6 +115,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 						sx127XDevice.Send(messageBytes);
 
 						Thread.Sleep(50000);
+
+						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss} Random {sx127XDevice.Random()}");
 					}
 				}
 			}
