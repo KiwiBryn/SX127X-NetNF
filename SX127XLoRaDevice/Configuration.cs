@@ -383,13 +383,32 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegSyncWord Syncword default for public networks
 		public const byte RegSyncWordDefault = 0x12;
 
-		// RegDioMapping1 
+		// RegDioMapping1 from table 18 for Dio0..Dio3 in LoRaMode
 		[Flags]
 		internal enum RegDioMapping1
 		{
 			Dio0RxDone = 0b00000000,
 			Dio0TxDone = 0b01000000,
 			Dio0CadDone = 0b10000000,
+			Dio0Mask = 0b11000000,
+			Dio0Default = 0b00000000,
+
+			Dio1RxTimeout = 0b00000000,
+			Dio1FhssChangeChannel = 0b00010000,
+			Dio1CadDetect = 0b00100000,
+			Dio1Default= 0b00000000,
+			Dio1Mask = 0b00110000,
+
+			Dio2Mask = 0b00001100,
+			Dio3Mask = 0b00000011,
+		}
+
+		// RegDioMapping2 Dio4..Dio5
+		[Flags]
+		internal enum RegDioMapping2
+		{
+			Di04Mask = 0b11000000,
+			Dio5Mask = 0b00110000,
 		}
 
 		// The Semtech ID Relating to the Silicon revision

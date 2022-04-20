@@ -47,6 +47,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public delegate void onTransmittedEventHandler(Object sender, OnDataTransmitedEventArgs e);
 		public event onTransmittedEventHandler OnTransmit;
 
+		public class OnChannelActivityDetectedEventArgs : EventArgs
+		{
+		}
+		public delegate void onChannelActivityDetectedEventHandler(Object sender, OnChannelActivityDetectedEventArgs e);
+		public event onChannelActivityDetectedEventHandler OnChannelActivityDetected;
 
 		// Hardware configuration support
 		private readonly int _resetPin;
@@ -57,18 +62,29 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private bool _rxDoneIgnoreIfCrcMissing = true;
 		private bool _rxDoneIgnoreIfCrcInvalid = true;
 
-		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin, int resetPin)
+		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController,
+			int dio0Pin,
+			int resetPin = 0, // Odd order so as not to break exisiting code
+			int dio1Pin = 0,
+			int dio2Pin = 0,
+			int dio3Pin = 0,
+			int dio4Pin = 0,
+			int dio5Pin = 0
+			)
 		{
 			_gpioController = gpioController;
 
 			// Factory reset pin configuration
-			_resetPin = resetPin;
-			_gpioController.OpenPin(resetPin, PinMode.Output);
+			if (resetPin != 0)
+			{
+				_resetPin = resetPin;
+				_gpioController.OpenPin(resetPin, PinMode.Output);
 
-			_gpioController.Write(resetPin, PinValue.Low);
-			Thread.Sleep(20);
-			_gpioController.Write(resetPin, PinValue.High);
-			Thread.Sleep(50);
+				_gpioController.Write(resetPin, PinValue.Low);
+				Thread.Sleep(20);
+				_gpioController.Write(resetPin, PinValue.High);
+				Thread.Sleep(50);
+			}
 
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
@@ -80,28 +96,38 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Interrupt pin for RX message & TX done notification 
-			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			_gpioController.OpenPin(dio0Pin, PinMode.InputPullDown);
+			_gpioController.RegisterCallbackForPinValueChangedEvent(dio0Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 
-			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
-		}
-
-		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin)
-		{
-			_gpioController = gpioController;
-
-			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
-
-			// Once the pins setup check that SX127X chip is present
-			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
-			if (regVersionValue != Configuration.RegVersionValueExpected)
+			if (dio1Pin != 0)
 			{
-				throw new ApplicationException("Semtech SX127X not found");
+				_gpioController.OpenPin(dio1Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio1Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 			}
 
-			// Interrupt pin for RX message & TX done notification 
-			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			if (dio2Pin != 0)
+			{
+				_gpioController.OpenPin(dio2Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio2Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
 
-			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			if (dio3Pin != 0)
+			{
+				_gpioController.OpenPin(dio3Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio3Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
+
+			if (dio4Pin != 0)
+			{
+				_gpioController.OpenPin(dio4Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio4Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
+
+			if (dio5Pin != 0)
+			{
+				_gpioController.OpenPin(dio5Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio5Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
 		}
 
 		public void SetMode(Configuration.RegOpModeMode mode)
@@ -466,6 +492,15 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			OnReceive?.Invoke(this, receiveArgs);
 		}
 
+		private void ProcessChannelActivityDetected(byte IrqFlags)
+		{
+			Debug.Assert(IrqFlags != 0);
+
+			OnChannelActivityDetectedEventArgs channelActivityDetectedArgs = new OnChannelActivityDetectedEventArgs();
+
+			OnChannelActivityDetected?.Invoke(this, channelActivityDetectedArgs);
+		}
+
 		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
 		{
 			// Read RegIrqFlags to see what caused the interrupt
@@ -481,6 +516,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
 			{
 				ProcessTxDone(IrqFlags);
+			}
+
+			// Check Channel Activity Detected 
+			if (((IrqFlags & (byte)Configuration.RegIrqFlagsMask.CadDoneMask) == (byte)Configuration.RegIrqFlags.CadDone))
+			{
+				ProcessChannelActivityDetected(IrqFlags);
 			}
 
 			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ClearAll);
@@ -513,6 +554,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
 			SetMode(Configuration.RegOpModeMode.Transmit);
+		}
+
+		public void ChannelActivity()
+		{
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0CadDone | (byte)Configuration.RegDioMapping1.Dio1CadDetect);
+			SetMode(Configuration.RegOpModeMode.ChannelActivityDetection);
 		}
 
 		public void RegisterDump()
