@@ -59,7 +59,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 		//private const byte AddressDestination = 0xaa;
 		private const byte AddressDestination = AddressDestinationBroadcast;
 
-		private const byte AddressLocal = 0xbb;
+		private const byte AddressLocal = 0xaa;
 #endif
 
 		static void Main(string[] args)
@@ -117,6 +117,8 @@ namespace devMobile.IoT.SX127x.RangeTester
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost: true,
 								powerAmplifier: Configuration.RegPAConfigPASelect.PABoost,
+								ocpOn: Configuration.RegOcp.On,
+								ocpTrim: Configuration.RegOcpTrim._150mA,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
