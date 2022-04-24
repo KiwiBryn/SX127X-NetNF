@@ -72,14 +72,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// RegIifFreq1 = 0x30
 			RegDetectOptimize = 0x31,
 			// Reserved 0x32
-			RegInvertIQ = 0x33,
+			RegInvertIq = 0x33,
 			// Reserved 0x34-0x35
 			RegHighBwOptimise1 = 0x36,
 			RegDetectionThreshold = 0x37,
 			// Reserved 0x38
 			RegSyncWord = 0x39,
 			RegHighBwOptimise2 = 0x3A,
-			RegInvertIQ2 = 0x3B,
+			RegInvertIq2 = 0x3B,
 			// Reserved 0x3C-0x3F
 			RegDioMapping1 = 0x40,
 			RegDioMapping2 = 0x41,
@@ -360,17 +360,28 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public const RegDetectOptimizeDectionOptimize RegDetectOptimizeDectionOptimizeDefault = RegDetectOptimizeDectionOptimize.SF7toSF12;
 
 		// RegInvertId
-		public const byte RegInvertIdDefault = 0b00100110;
-		public const byte InvertIqRXOn = 0b01000000;
-		public const byte InvertIqRXOff = 0b00000000;
-		public const bool InvertIqRXDefault = false;
+		internal const byte RegInvertIqDefault = 0b00100110;
 
-		public const byte InvertIqTXOn = 0b00000001;
-		public const byte InvertIqTXOff = 0b00000000;
-		public const bool InvertIqTXDefault = true;
+		public enum InvertIqRx :byte
+		{
+			On = 0b01000000,
+			Off = 0b00000000,
+			Default = Off
+		}
 
-		public const byte RegInvertIq2On = 0x19;
-		public const byte RegInvertIq2Off = 0x1D;
+		public enum InvertIqTx : byte
+		{
+			On = 0b00000001,
+			Default = On,
+			Off = 0b00000000
+		}
+
+		internal enum RegInvertIq2
+		{
+			On = 0x19,
+			Off = 0x1D,
+			Default = Off
+		}
 
 		// RegDetectionThreshold
 		public enum RegisterDetectionThreshold

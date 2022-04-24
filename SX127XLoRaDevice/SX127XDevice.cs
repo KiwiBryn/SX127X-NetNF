@@ -137,7 +137,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			bool lowDataRateOptimize = Configuration.LowDataRateOptimizeDefault, bool agcAutoOn = Configuration.AgcAutoOnDefault,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
 			Configuration.RegDetectOptimizeDectionOptimize detectionOptimize = Configuration.RegDetectOptimizeDectionOptimizeDefault,
-			bool invertIQRX = Configuration.InvertIqRXDefault, bool invertIQTX = Configuration.InvertIqTXDefault,
+			Configuration.InvertIqRx invertIqRX = Configuration.InvertIqRx.Default, Configuration.InvertIqTx invertIqTX = Configuration.InvertIqTx.Default,
 			Configuration.RegisterDetectionThreshold detectionThreshold = Configuration.RegisterDetectionThresholdDefault,
 			byte syncWord = Configuration.RegSyncWordDefault)
 		{
@@ -354,29 +354,30 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_registerManager.WriteByte((byte)Configuration.Registers.RegDetectOptimize, (byte)detectionOptimize);
 			}
 
-			if ((invertIQRX != Configuration.InvertIqRXDefault) || (invertIQTX != Configuration.InvertIqTXDefault))
+			// TX & RX inversion plus optimisation specialness
+			if ((invertIqRX != Configuration.InvertIqRx.Default) || (invertIqTX != Configuration.InvertIqTx.Default))
 			{
-				byte regInvertIQValue = Configuration.RegInvertIdDefault;
+				byte regInvertIqValue = Configuration.RegInvertIqDefault;
 
-				if (invertIQRX)
+				if (invertIqRX == Configuration.InvertIqRx.On)
 				{
-					regInvertIQValue |= Configuration.InvertIqRXOn;
+					regInvertIqValue |= (byte)Configuration.InvertIqRx.On;
 				}
 
-				if (invertIQTX)
+				if (invertIqTX == Configuration.InvertIqTx.On)
 				{
-					regInvertIQValue |= Configuration.InvertIqTXOn;
+					regInvertIqValue |= (byte)Configuration.InvertIqTx.On;
 				}
 
-				_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ, regInvertIQValue);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq, regInvertIqValue);
 
-				if (invertIQRX || invertIQTX)
+				if ((invertIqRX == Configuration.InvertIqRx.On) || (invertIqTX == Configuration.InvertIqTx.On))
 				{
-					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2On);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq2, (byte)Configuration.RegInvertIq2.On);
 				}
 				else
 				{
-					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2Off);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq2, (byte)Configuration.RegInvertIq2.Off);
 				}
 			}
 
