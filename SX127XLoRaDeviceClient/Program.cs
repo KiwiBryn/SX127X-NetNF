@@ -57,7 +57,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Arduino D6 - PB9
 			int dio1PinNumber = PinNumber('B', 9);
 			// Arduino D7
-			//int dio2PinNumber = PinNumber('A', 1);
+			int dio2PinNumber = PinNumber('A', 1);
+			// Not connected on Dragino LoRa shield
+			//int dio3PinNumber = PinNumber('A', 1);
+			//  Not connected on Dragino LoRa shield
+			//int dio4PinNumber = PinNumber('A', 1);
+			// Arduino D8
+			int dio5PinNumber = PinNumber('A', 0);
+
 #endif
 #if ST_STM32F769I_DISCOVERY
 			// Arduino D10->PA11
@@ -89,7 +96,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, dio0Pin:dio0PinNumber, resetPin:resetPinNumber, dio1Pin: dio1PinNumber);
+					sx127XDevice = new SX127XDevice(spiDevice, gpioController, dio0Pin:dio0PinNumber, resetPin:resetPinNumber, dio1Pin: dio1PinNumber, dio2Pin: dio2PinNumber);
 #endif
 
 					sx127XDevice.Initialise(Frequency
@@ -104,11 +111,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice.RegisterDump();
 #endif
 
-					sx127XDevice.OnChannelActivityDetected += SX127XDevice_OnChannelActivityDetected;
-					sx127XDevice.ChannelActivity();
 					sx127XDevice.OnReceive += SX127XDevice_OnReceive;
 					sx127XDevice.Receive(); 
 					sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
+					sx127XDevice.OnChannelActivityDetectionDone += Sx127XDevice_OnChannelActivityDetectionDone;
+					sx127XDevice.OnChannelActivityDetected += SX127XDevice_OnChannelActivityDetected;
+					//sx127XDevice.ChannelActivityDetect();
 
 					Thread.Sleep(500);
 
@@ -160,11 +168,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX Done");
 		}
 
+		private static void Sx127XDevice_OnChannelActivityDetectionDone(object sender, SX127XDevice.OnChannelActivityDetectionDoneEventArgs e)
+		{
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Detection Done");
+		}
+
 		private static void SX127XDevice_OnChannelActivityDetected(object sender, SX127XDevice.OnChannelActivityDetectedEventArgs e)
 		{
 			sx127XDevice.Receive();
 
-			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Done");
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Detected");
 		}
 
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
