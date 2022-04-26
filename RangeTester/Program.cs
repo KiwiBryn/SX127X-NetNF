@@ -67,7 +67,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 			byte SendCount = 0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
 			int chipSelectLine = Gpio.IO16;
-			int interruptPinNumber = Gpio.IO26;
+			int dio0PinNumber = Gpio.IO26;
 #endif
 #if NETDUINO3_WIFI
 			// Arduino D10->PB10
@@ -75,7 +75,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 			// Arduino D9->PE5
 			int resetPinNumber = PinNumber('E', 5);
 			// Arduino D2 -PA3
-			int interruptPinNumber = PinNumber('A', 3);
+			int dio0PinNumber = PinNumber('A', 3);
 #endif
 #if ST_STM32F769I_DISCOVERY
 			// Arduino D10->PA11
@@ -83,7 +83,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 			// Arduino D9->PH6
 			int resetPinNumber = PinNumber('H', 6);
 			// Arduino D2->PA4
-			int interruptPinNumber = PinNumber('J', 1);
+			int dio0PinNumber = PinNumber('J', 1);
 #endif
 			Console.WriteLine("devMobile.IoT.SX127xLoRaDevice Range Tester starting");
 
@@ -109,7 +109,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 #endif
 
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, interruptPinNumber, resetPinNumber);
+					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, dio0Pin: dio0PinNumber, resetPinNumber);
 #endif
 
 					_sx127XDevice.Initialise(
