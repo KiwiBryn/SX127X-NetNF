@@ -112,11 +112,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice.RegisterDump();
 #endif
 
+					//sx127XDevice.OnRxTimeout += Sx127XDevice_OnRxTimeout;
 					sx127XDevice.OnReceive += SX127XDevice_OnReceive;
-					sx127XDevice.Receive(); 
+					//sx127XDevice.OnPayloadCrcError += Sx127XDevice_OnPayloadCrcError;
+					//sx127XDevice.OnValidHeader += Sx127XDevice_OnValidHeader;
 					sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
 					//sx127XDevice.OnChannelActivityDetectionDone += Sx127XDevice_OnChannelActivityDetectionDone;
+					//sx127XDevice.OnFhssChangeChannel += Sx127XDevice_OnFhssChangeChannel;
 					//sx127XDevice.OnChannelActivityDetected += SX127XDevice_OnChannelActivityDetected;
+
+					sx127XDevice.Receive();
 					//sx127XDevice.ChannelActivityDetect();
 
 					Thread.Sleep(500);
@@ -139,6 +144,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			{
 				Console.WriteLine(ex.Message);
 			}
+		}
+
+		private static void Sx127XDevice_OnRxTimeout(object sender, SX127XDevice.OnRxTimeoutEventArgs e)
+		{
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-RX Timeout");
 		}
 
 		private static void SX127XDevice_OnReceive(object sender, SX127XDevice.OnDataReceivedEventArgs e)
@@ -164,6 +174,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 		}
 
+		private static void Sx127XDevice_OnPayloadCrcError(object sender, SX127XDevice.OnPayloadCrcErrorEventArgs e)
+		{
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CRC Error");
+		}
+
+		private static void Sx127XDevice_OnValidHeader(object sender, SX127XDevice.OnValidHeaderEventArgs e)
+		{
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-Valid Header");
+		}
+
 		private static void SX127XDevice_OnTransmit(object sender, SX127XDevice.OnDataTransmitedEventArgs e)
 		{
 			sx127XDevice.Receive();
@@ -173,15 +193,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		private static void Sx127XDevice_OnChannelActivityDetectionDone(object sender, SX127XDevice.OnChannelActivityDetectionDoneEventArgs e)
 		{
-			//sx127XDevice.Receive();
-
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Detection Done");
+		}
+
+		private static void Sx127XDevice_OnFhssChangeChannel(object sender, SX127XDevice.OnFhssChangeChannelEventArgs e)
+		{
+			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-FHSS Change Channel");
 		}
 
 		private static void SX127XDevice_OnChannelActivityDetected(object sender, SX127XDevice.OnChannelActivityDetectedEventArgs e)
 		{
-			//sx127XDevice.Receive();
-
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Detected");
 		}
 
