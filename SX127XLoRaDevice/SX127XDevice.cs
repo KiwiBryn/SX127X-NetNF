@@ -1,4 +1,4 @@
-﻿//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // Copyright (c) March 2022, devMobile Software
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const byte RegisterAddressReadMask = 0X7f;
 		private const byte RegisterAddressWriteMask = 0x80;
 
+		public class OnRxTimeoutEventArgs : EventArgs
+		{
+		}
+		public delegate void onRxTimeoutEventHandler(Object sender, OnRxTimeoutEventArgs e);
+		public event onRxTimeoutEventHandler OnRxTimeout;
+
 		public class OnDataReceivedEventArgs : EventArgs
 		{
 			public float PacketSnr { get; set; }
@@ -41,12 +47,41 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		public delegate void onReceivedEventHandler(Object sender, OnDataReceivedEventArgs e);
 		public event onReceivedEventHandler OnReceive;
 
+		public class OnPayloadCrcErrorEventArgs : EventArgs
+		{
+		}
+		public delegate void onPayloadCrcErrorEventHandler(Object sender, OnPayloadCrcErrorEventArgs e);
+		public event onPayloadCrcErrorEventHandler OnPayloadCrcError;
+
+		public class OnValidHeaderEventArgs : EventArgs
+		{
+		}
+		public delegate void onValidHeaderEventHandler(Object sender, OnValidHeaderEventArgs e);
+		public event onValidHeaderEventHandler OnValidHeader;
+
 		public class OnDataTransmitedEventArgs : EventArgs
 		{
 		}
 		public delegate void onTransmittedEventHandler(Object sender, OnDataTransmitedEventArgs e);
 		public event onTransmittedEventHandler OnTransmit;
 
+		public class OnChannelActivityDetectionDoneEventArgs : EventArgs
+		{
+		}
+		public delegate void onChannelActivityDetectionDoneEventHandler(Object sender, OnChannelActivityDetectionDoneEventArgs e);
+		public event onChannelActivityDetectionDoneEventHandler OnChannelActivityDetectionDone;
+
+		public class OnFhssChangeChannelEventArgs : EventArgs
+		{
+		}
+		public delegate void OnFhssChangeChannelEventHandler(Object sender, OnFhssChangeChannelEventArgs e);
+		public event OnFhssChangeChannelEventHandler OnFhssChangeChannel;
+
+		public class OnChannelActivityDetectedEventArgs : EventArgs
+		{
+		}
+		public delegate void onChannelActivityDetectedEventHandler(Object sender, OnChannelActivityDetectedEventArgs e);
+		public event onChannelActivityDetectedEventHandler OnChannelActivityDetected;
 
 		// Hardware configuration support
 		private readonly int _resetPin;
@@ -57,18 +92,29 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private bool _rxDoneIgnoreIfCrcMissing = true;
 		private bool _rxDoneIgnoreIfCrcInvalid = true;
 
-		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin, int resetPin)
+		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController,
+			int dio0Pin,
+			int resetPin = 0, // Odd order so as not to break exisiting code
+			int dio1Pin = 0,
+			int dio2Pin = 0,
+			int dio3Pin = 0,
+			int dio4Pin = 0,
+			int dio5Pin = 0
+			)
 		{
 			_gpioController = gpioController;
 
 			// Factory reset pin configuration
-			_resetPin = resetPin;
-			_gpioController.OpenPin(resetPin, PinMode.Output);
+			if (resetPin != 0)
+			{
+				_resetPin = resetPin;
+				_gpioController.OpenPin(resetPin, PinMode.Output);
 
-			_gpioController.Write(resetPin, PinValue.Low);
-			Thread.Sleep(20);
-			_gpioController.Write(resetPin, PinValue.High);
-			Thread.Sleep(50);
+				_gpioController.Write(resetPin, PinValue.Low);
+				Thread.Sleep(20);
+				_gpioController.Write(resetPin, PinValue.High);
+				Thread.Sleep(50);
+			}
 
 			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
 
@@ -79,29 +125,45 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				throw new ApplicationException("Semtech SX127X not found");
 			}
 
-			// Interrupt pin for RX message & TX done notification 
-			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			// See Table 18 DIO Mapping LoRa® Mode
+			// Interrupt pin for RXDone, TXDone, and CadDone notification 
+			_gpioController.OpenPin(dio0Pin, PinMode.InputPullDown);
+			_gpioController.RegisterCallbackForPinValueChangedEvent(dio0Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 
-			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
-		}
-
-		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController, int interruptPin)
-		{
-			_gpioController = gpioController;
-
-			_registerManager = new RegisterManager(spiDevice, RegisterAddressReadMask, RegisterAddressWriteMask);
-
-			// Once the pins setup check that SX127X chip is present
-			Byte regVersionValue = _registerManager.ReadByte((byte)Configuration.Registers.RegVersion);
-			if (regVersionValue != Configuration.RegVersionValueExpected)
+			// RxTimeout, FhssChangeChannel, and CadDetected
+			if (dio1Pin != 0)
 			{
-				throw new ApplicationException("Semtech SX127X not found");
+				_gpioController.OpenPin(dio1Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio1Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
 			}
 
-			// Interrupt pin for RX message & TX done notification 
-			_gpioController.OpenPin(interruptPin, PinMode.InputPullDown);
+			// FhssChangeChannel, FhssChangeChannel, and FhssChangeChannel
+			if (dio2Pin != 0)
+			{
+				_gpioController.OpenPin(dio2Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio2Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
 
-			_gpioController.RegisterCallbackForPinValueChangedEvent(interruptPin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			// CadDone, ValidHeader, and PayloadCrcError
+			if (dio3Pin != 0)
+			{
+				_gpioController.OpenPin(dio3Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio3Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
+
+			// CadDetected, PllLock and PllLock
+			if (dio4Pin != 0)
+			{
+				_gpioController.OpenPin(dio4Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio4Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
+
+			// ModeReady, ClkOut and ClkOut
+			if (dio5Pin != 0)
+			{
+				_gpioController.OpenPin(dio5Pin, PinMode.InputPullDown);
+				_gpioController.RegisterCallbackForPinValueChangedEvent(dio5Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
+			}
 		}
 
 		public void SetMode(Configuration.RegOpModeMode mode)
@@ -388,19 +450,102 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 		}
 
-		private void ProcessTxDone(byte IrqFlags)
+		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
 		{
-			Debug.Assert(IrqFlags != 0);
+			Byte regIrqFlagsToClear = (byte)Configuration.RegIrqFlags.ClearNone;
 
-			OnDataTransmitedEventArgs transmitArgs = new OnDataTransmitedEventArgs();
+			// Read RegIrqFlags to see what caused the interrupt
+			Byte irqFlags = _registerManager.ReadByte((byte)Configuration.Registers.RegIrqFlags);
 
-			OnTransmit?.Invoke(this, transmitArgs);
+			//Console.WriteLine($"IrqFlags 0x{irqFlags:x} Pin:{pinValueChangedEventArgs.PinNumber}");
+
+			// Check RxTimeout for inbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxTimeoutMask) == (byte)Configuration.RegIrqFlags.RxTimeout)
+			{
+				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.RxTimeout);
+
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxTimeout;
+
+				ProcessRxTimeout(irqFlags);
+			}
+
+			// Check RxDone for inbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
+			{
+				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.RxDone);
+
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxDone;
+
+				ProcessRxDone(irqFlags);
+			}
+
+			// Check PayLoadCrcError for inbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlags.PayLoadCrcError)
+			{
+				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.PayLoadCrcError);
+
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.PayLoadCrcError;
+
+				ProcessPayloadCrcError(irqFlags);
+			}
+
+			// Check ValidHeader for inbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.ValidHeaderMask) == (byte)Configuration.RegIrqFlags.ValidHeader)
+			{
+				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ValidHeader);
+
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.ValidHeader;
+
+				ProcessValidHeader(irqFlags);
+			}
+
+			// Check TxDone for outbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
+			{
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.TxDone;
+
+				ProcessTxDone(irqFlags);
+			}
+
+			// Check Channel Activity Detection done 
+			if (((irqFlags & (byte)Configuration.RegIrqFlagsMask.CadDoneMask) == (byte)Configuration.RegIrqFlags.CadDone))
+			{
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.CadDone;
+
+				ProcessChannelActivityDetectionDone(irqFlags);
+			}
+
+			// Check FhssChangeChannel for inbound message
+			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.FhssChangeChannelMask) == (byte)Configuration.RegIrqFlags.FhssChangeChannel)
+			{
+				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.FhssChangeChannel);
+
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.FhssChangeChannel;
+
+				ProcessFhssChangeChannel(irqFlags);
+			}
+
+			// Check Channel Activity Detected 
+			if (((irqFlags & (byte)Configuration.RegIrqFlagsMask.CadDetectedMask) == (byte)Configuration.RegIrqFlags.CadDetected))
+			{
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.TxDone;
+
+				ProcessChannelActivityDetected(irqFlags);
+			}
+
+			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, regIrqFlagsToClear);
 		}
 
-		private void ProcessRxDone(byte IrqFlags)
+		private void ProcessRxTimeout(byte irqFlags)
+		{
+			OnRxTimeoutEventArgs onRxTimeoutArgs = new OnRxTimeoutEventArgs();
+
+			OnRxTimeout?.Invoke(this, onRxTimeoutArgs);
+		}
+
+		private void ProcessRxDone(byte irqFlags)
 		{
 			byte[] payloadBytes;
-			Debug.Assert(IrqFlags != 0);
 
 			// Check to see if payload has CRC 
 			if (_rxDoneIgnoreIfCrcMissing)
@@ -415,7 +560,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check to see if payload CRC is valid
 			if (_rxDoneIgnoreIfCrcInvalid)
 			{
-				if ((IrqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask)
+				if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask)
 				{
 					return;
 				}
@@ -467,29 +612,52 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			OnReceive?.Invoke(this, receiveArgs);
 		}
 
-		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
+		private void ProcessPayloadCrcError(byte irqFlags)
 		{
-			// Read RegIrqFlags to see what caused the interrupt
-			Byte irqFlags = _registerManager.ReadByte((byte)Configuration.Registers.RegIrqFlags);
+			OnPayloadCrcErrorEventArgs payloadCrcErrorActivityDetectedArgs = new OnPayloadCrcErrorEventArgs();
 
-			// Check RxDone for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
-			{
-				ProcessRxDone(irqFlags);
-			}
+			OnPayloadCrcError?.Invoke(this, payloadCrcErrorActivityDetectedArgs);
+		}
 
-			// Check TxDone for outbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
-			{
-				ProcessTxDone(irqFlags);
-			}
+		private void ProcessValidHeader(byte irqFlags)
+		{
+			OnValidHeaderEventArgs validHeaderArgs = new OnValidHeaderEventArgs();
 
-			_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ClearAll);
+      OnValidHeader?.Invoke(this, validHeaderArgs);
+		}
+
+		private void ProcessTxDone(byte irqFlags)
+		{
+			OnDataTransmitedEventArgs transmitArgs = new OnDataTransmitedEventArgs();
+
+			OnTransmit?.Invoke(this, transmitArgs);
+		}
+
+		private void ProcessChannelActivityDetectionDone(byte irqFlags)
+		{
+			OnChannelActivityDetectionDoneEventArgs channelActivityDetectionDoneArgs = new OnChannelActivityDetectionDoneEventArgs();
+
+			OnChannelActivityDetectionDone?.Invoke(this, channelActivityDetectionDoneArgs);
+		}
+
+		private void ProcessFhssChangeChannel(byte irqFlags)
+		{
+			OnFhssChangeChannelEventArgs fhssChangeChanneldArgs = new OnFhssChangeChannelEventArgs();
+
+			OnFhssChangeChannel?.Invoke(this, fhssChangeChanneldArgs);
+		}
+
+		private void ProcessChannelActivityDetected(byte irqFlags)
+		{
+			OnChannelActivityDetectedEventArgs channelActivityDetectedArgs = new OnChannelActivityDetectedEventArgs();
+
+			OnChannelActivityDetected?.Invoke(this, channelActivityDetectedArgs);
 		}
 
 		public void Receive()
 		{
 			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
+
 			SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
 		}
 
@@ -515,6 +683,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
 			SetMode(Configuration.RegOpModeMode.Transmit);
 		}
+
+    public void ChannelActivityDetect()
+		{
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio1CadDetect);
+
+			SetMode(Configuration.RegOpModeMode.ChannelActivityDetection);
+    }
 
 		public byte Random()
 		{
