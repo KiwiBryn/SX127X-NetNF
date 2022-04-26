@@ -117,7 +117,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					sx127XDevice.OnTransmit += SX127XDevice_OnTransmit;
 					sx127XDevice.OnChannelActivityDetectionDone += Sx127XDevice_OnChannelActivityDetectionDone;
 					sx127XDevice.OnChannelActivityDetected += SX127XDevice_OnChannelActivityDetected;
-					//sx127XDevice.ChannelActivityDetect();
+					sx127XDevice.ChannelActivityDetect();
 
 					Thread.Sleep(500);
 
@@ -127,7 +127,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 						byte[] messageBytes = UTF8Encoding.UTF8.GetBytes(messageText);
 						Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-TX {messageBytes.Length} byte message {messageText}");
-						sx127XDevice.Send(messageBytes);
+						//sx127XDevice.Send(messageBytes);
 
 						Thread.Sleep(50000);
 
@@ -173,6 +173,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		private static void Sx127XDevice_OnChannelActivityDetectionDone(object sender, SX127XDevice.OnChannelActivityDetectionDoneEventArgs e)
 		{
+			sx127XDevice.Receive();
+
 			Console.WriteLine($"{DateTime.UtcNow:HH:mm:ss}-CAD Detection Done");
 		}
 
