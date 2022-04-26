@@ -462,8 +462,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check RxTimeout for inbound message
 			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxTimeoutMask) == (byte)Configuration.RegIrqFlags.RxTimeout)
 			{
-				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.RxTimeout);
-
 				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxTimeout;
 
 				ProcessRxTimeout(irqFlags);
@@ -472,8 +470,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check RxDone for inbound message
 			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
 			{
-				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.RxDone);
-
 				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxDone;
 
 				ProcessRxDone(irqFlags);
@@ -482,8 +478,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check PayLoadCrcError for inbound message
 			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlags.PayLoadCrcError)
 			{
-				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.PayLoadCrcError);
-
 				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.PayLoadCrcError;
 
 				ProcessPayloadCrcError(irqFlags);
@@ -492,8 +486,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check ValidHeader for inbound message
 			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.ValidHeaderMask) == (byte)Configuration.RegIrqFlags.ValidHeader)
 			{
-				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.ValidHeader);
-
 				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.ValidHeader;
 
 				ProcessValidHeader(irqFlags);
@@ -518,8 +510,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check FhssChangeChannel for inbound message
 			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.FhssChangeChannelMask) == (byte)Configuration.RegIrqFlags.FhssChangeChannel)
 			{
-				_registerManager.WriteByte((byte)Configuration.Registers.RegIrqFlags, (byte)Configuration.RegIrqFlags.FhssChangeChannel);
-
 				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.FhssChangeChannel;
 
 				ProcessFhssChangeChannel(irqFlags);
@@ -528,7 +518,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check Channel Activity Detected 
 			if (((irqFlags & (byte)Configuration.RegIrqFlagsMask.CadDetectedMask) == (byte)Configuration.RegIrqFlags.CadDetected))
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.TxDone;
+				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.CadDetected;
 
 				ProcessChannelActivityDetected(irqFlags);
 			}
