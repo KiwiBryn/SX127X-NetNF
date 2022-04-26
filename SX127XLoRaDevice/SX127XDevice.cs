@@ -126,6 +126,17 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// See Table 18 DIO Mapping LoRa® Mode
+			Configuration.RegDioMapping1 regDioMapping1Value = Configuration.RegDioMapping1.Dio0None;
+			regDioMapping1Value |= Configuration.RegDioMapping1.Dio1None;
+			regDioMapping1Value |= Configuration.RegDioMapping1.Dio2None;
+			regDioMapping1Value |= Configuration.RegDioMapping1.Dio3None;
+			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)regDioMapping1Value);
+
+			// Currently no easy way to test this with available hardware
+			//Configuration.RegDioMapping2 regDioMapping2Value = Configuration.RegDioMapping2.Dio4None;
+			//regDioMapping2Value = Configuration.RegDioMapping2.Dio5None;
+			//_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping2, (byte)regDioMapping2Value);
+
 			// Interrupt pin for RXDone, TXDone, and CadDone notification 
 			_gpioController.OpenPin(dio0Pin, PinMode.InputPullDown);
 			_gpioController.RegisterCallbackForPinValueChangedEvent(dio0Pin, PinEventTypes.Rising, InterruptGpioPin_ValueChanged);
