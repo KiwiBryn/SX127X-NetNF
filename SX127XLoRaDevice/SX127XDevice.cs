@@ -1,4 +1,4 @@
-﻿//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 // Copyright (c) March 2022, devMobile Software
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -189,8 +189,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			Configuration.RegOcp ocpOn = Configuration.RegOcp.Default, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpTrim.Default, // RegOcp
 			Configuration.RegLnaLnaGain lnaGain = Configuration.RegLnaLnaGain.Default, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
-			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidthDefault, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRateDefault, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOnDefault, //RegModemConfig1
-			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactorDefault, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
+			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidth.Default, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRate.Default, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
+			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
 			ushort preambleLength = Configuration.PreambleLengthDefault,
 			byte payloadLength = Configuration.PayloadLengthDefault,
@@ -199,7 +199,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			bool lowDataRateOptimize = Configuration.LowDataRateOptimizeDefault, bool agcAutoOn = Configuration.AgcAutoOnDefault,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
 			Configuration.RegDetectOptimizeDectionOptimize detectionOptimize = Configuration.RegDetectOptimizeDectionOptimizeDefault,
-			bool invertIQRX = Configuration.InvertIqRXDefault, bool invertIQTX = Configuration.InvertIqTXDefault,
+			Configuration.InvertIqRx invertIqRX = Configuration.InvertIqRx.Default, Configuration.InvertIqTx invertIqTX = Configuration.InvertIqTx.Default,
 			Configuration.RegisterDetectionThreshold detectionThreshold = Configuration.RegisterDetectionThresholdDefault,
 			byte syncWord = Configuration.RegSyncWordDefault)
 		{
@@ -323,7 +323,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set regModemConfig1 if any of the settings not defaults
-			if ((bandwidth != Configuration.RegModemConfigBandwidthDefault) || (codingRate != Configuration.RegModemConfigCodingRateDefault) || (implicitHeaderModeOn != Configuration.RegModemConfigImplicitHeaderModeOnDefault))
+			if ((bandwidth != Configuration.RegModemConfigBandwidth.Default) || (codingRate != Configuration.RegModemConfigCodingRate.Default) || (implicitHeaderModeOn != Configuration.RegModemConfigImplicitHeaderModeOn.Default))
 			{
 				byte regModemConfig1Value = (byte)bandwidth;
 				regModemConfig1Value |= (byte)codingRate;
@@ -337,7 +337,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set regModemConfig2 if any of the settings not defaults
-			if ((spreadingFactor != Configuration.RegModemConfig2SpreadingFactorDefault) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
+			if ((spreadingFactor != Configuration.RegModemConfig2SpreadingFactor.Default) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
 			{
 				byte RegModemConfig2Value = (byte)spreadingFactor;
 				if (txContinuousMode)
@@ -416,29 +416,30 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_registerManager.WriteByte((byte)Configuration.Registers.RegDetectOptimize, (byte)detectionOptimize);
 			}
 
-			if ((invertIQRX != Configuration.InvertIqRXDefault) || (invertIQTX != Configuration.InvertIqTXDefault))
+			// TX & RX inversion plus optimisation specialness
+			if ((invertIqRX != Configuration.InvertIqRx.Default) || (invertIqTX != Configuration.InvertIqTx.Default))
 			{
-				byte regInvertIQValue = Configuration.RegInvertIdDefault;
+				byte regInvertIqValue = Configuration.RegInvertIqDefault;
 
-				if (invertIQRX)
+				if (invertIqRX == Configuration.InvertIqRx.On)
 				{
-					regInvertIQValue |= Configuration.InvertIqRXOn;
+					regInvertIqValue |= (byte)Configuration.InvertIqRx.On;
 				}
 
-				if (invertIQTX)
+				if (invertIqTX == Configuration.InvertIqTx.On)
 				{
-					regInvertIQValue |= Configuration.InvertIqTXOn;
+					regInvertIqValue |= (byte)Configuration.InvertIqTx.On;
 				}
 
-				_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ, regInvertIQValue);
+				_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq, regInvertIqValue);
 
-				if (invertIQRX || invertIQTX)
+				if ((invertIqRX == Configuration.InvertIqRx.On) || (invertIqTX == Configuration.InvertIqTx.On))
 				{
-					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2On);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq2, (byte)Configuration.RegInvertIq2.On);
 				}
 				else
 				{
-					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIQ2, Configuration.RegInvertIq2Off);
+					_registerManager.WriteByte((byte)Configuration.Registers.RegInvertIq2, (byte)Configuration.RegInvertIq2.Off);
 				}
 			}
 
@@ -622,7 +623,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			OnValidHeaderEventArgs validHeaderArgs = new OnValidHeaderEventArgs();
 
-			OnValidHeader?.Invoke(this, validHeaderArgs);
+      OnValidHeader?.Invoke(this, validHeaderArgs);
 		}
 
 		private void ProcessTxDone(byte irqFlags)
@@ -683,11 +684,16 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			SetMode(Configuration.RegOpModeMode.Transmit);
 		}
 
-		public void ChannelActivityDetect()
+    public void ChannelActivityDetect()
 		{
 			_registerManager.WriteByte((byte)Configuration.Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio1CadDetect);
 
 			SetMode(Configuration.RegOpModeMode.ChannelActivityDetection);
+    }
+
+		public byte Random()
+		{
+			return _registerManager.ReadByte((byte)Configuration.Registers.RegRssiWideband);
 		}
 
 		public void RegisterDump()
