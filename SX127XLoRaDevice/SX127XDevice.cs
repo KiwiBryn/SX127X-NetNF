@@ -253,7 +253,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 						throw new ApplicationException($"PABoost {outputPower}dBm Min power {Configuration.OutputPowerPABoostMin} to Max power {Configuration.OutputPowerPABoostMax}");
 					}
 
-					if (outputPower < Configuration.OutputPowerPABoostPaDacThreshhold)
+					if (outputPower <= Configuration.OutputPowerPABoostPaDacThreshhold)
 					{
 						// outputPower 0..15 so pOut is 2=17-(15-0)...17=17-(15-15)
 						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Default;
