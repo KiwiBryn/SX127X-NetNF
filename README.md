@@ -14,8 +14,9 @@ The repo has the source code for the series of blog posts written as I built thi
 07. [Can't hear you-RegLna & RegLnaGain](http://blog.devmobile.co.nz/2022/04/01/net-sx127x-lora-library-reglna-lnagain/)
 08. [Can you hear me-RegPaConfig & RegPaDac](http://blog.devmobile.co.nz/2022/04/16/net-sx127x-lora-library-regpaconfig-regpadac/)
 09. [Dio0,Dio1,Dio2,Dio3,Dio4,Dio5](http://blog.devmobile.co.nz/2022/04/26/net-sx127x-lora-library-dio0dio1dio2dio3dio4dio5/)
+10. [RegPaConfig RegPaDac The never ending story](http://blog.devmobile.co.nz/2022/05/01/net-sx127x-lora-library-regpaconfig-regpadac-the-never-ending-story/)
 
-There are also a parallel development projects for [.Net](https://github.com/KiwiBryn/SX127XLoRa-Net), and [GHI ELectronicss](https://ghielectronics.com/) [TinyCLR](https://github.com/KiwiBryn/RFM9XLoRa-TinyCLR)
+There are also a parallel development projects for [.Net](https://github.com/KiwiBryn/SX127XLoRa-Net), and [GHI ELectronics](https://ghielectronics.com/) [TinyCLR](https://github.com/KiwiBryn/RFM9XLoRa-TinyCLR)
 
 My test rig consisted of
 * [STM32F796I Discovery](https://www.st.com/en/evaluation-tools/32f769idiscovery.html) from [ST Micro electronics](https://www.st.com)
