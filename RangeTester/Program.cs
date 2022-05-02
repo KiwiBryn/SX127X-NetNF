@@ -29,6 +29,10 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 	using devMobile.IoT.SX127xLoRaDevice;
 
+#if ESP32_WROOM_32_LORA_1_CHANNEL
+	using nanoFramework.Hardware.Esp32 ;
+#endif
+
 	class Program
 	{
 		private const double Frequency = 915000000.0;
