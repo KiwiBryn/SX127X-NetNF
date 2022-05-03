@@ -200,8 +200,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			sbyte outputPower = Configuration.OutputPowerDefault, RegPAConfigPASelect powerAmplifier = RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
 			RegLnaLnaGain lnaGain = RegLnaLnaGain.Default, bool lnaBoost = false, // RegLna
-			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidth.Default, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRate.Default, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
-			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
+			RegModemConfigBandwidth bandwidth = RegModemConfigBandwidth.Default, RegModemConfigCodingRate codingRate = RegModemConfigCodingRate.Default, RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
+			RegModemConfig2SpreadingFactor spreadingFactor = RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
 			ushort preambleLength = Configuration.PreambleLengthDefault,
 			byte payloadLength = Configuration.PayloadLengthDefault,
@@ -334,7 +334,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set regModemConfig1 if any of the settings not defaults
-			if ((bandwidth != Configuration.RegModemConfigBandwidth.Default) || (codingRate != Configuration.RegModemConfigCodingRate.Default) || (implicitHeaderModeOn != Configuration.RegModemConfigImplicitHeaderModeOn.Default))
+			if ((bandwidth != RegModemConfigBandwidth.Default) || (codingRate != RegModemConfigCodingRate.Default) || (implicitHeaderModeOn != RegModemConfigImplicitHeaderModeOn.Default))
 			{
 				byte regModemConfig1Value = (byte)bandwidth;
 				regModemConfig1Value |= (byte)codingRate;
@@ -348,7 +348,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set regModemConfig2 if any of the settings not defaults
-			if ((spreadingFactor != Configuration.RegModemConfig2SpreadingFactor.Default) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
+			if ((spreadingFactor != RegModemConfig2SpreadingFactor.Default) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
 			{
 				byte RegModemConfig2Value = (byte)spreadingFactor;
 				if (txContinuousMode)

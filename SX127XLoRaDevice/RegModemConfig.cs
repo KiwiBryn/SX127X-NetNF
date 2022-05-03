@@ -16,5 +16,49 @@
 //---------------------------------------------------------------------------------
 namespace devMobile.IoT.SX127xLoRaDevice
 {
-	// RegOcp settings from Semtech SX127X Datasheet
+	// RegModemConfig1 & RegModemConfig2 settings from Semtech SX127X Datasheet
+	public enum RegModemConfigBandwidth : byte
+	{
+		_7_8KHz = 0b00000000,
+		_10_4KHz = 0b00010000,
+		_15_6KHz = 0b00100000,
+		_20_8KHz = 0b00110000,
+		_31_25KHz = 0b01000000,
+		_41_7KHz = 0b01010000,
+		_62_5KHz = 0b01100000,
+		_125KHz = 0b01110000,
+		Default = _125KHz,
+		_250KHz = 0b10000000,
+		_500KHz = 0b10010000
+	}
+
+	public enum RegModemConfigCodingRate
+	{
+		_4of5 = 0b00000010,
+		Default = _4of5,
+		_4of6 = 0b00000100,
+		_4of7 = 0b00000110,
+		_4of8 = 0b00001000,
+	}
+
+	public enum RegModemConfigImplicitHeaderModeOn
+	{
+		ExplicitHeaderMode = 0b00000000,
+		Default = ExplicitHeaderMode,
+		ImplicitHeaderMode = 0b00000001,
+	}
+
+	// RegModemConfig2
+	public enum RegModemConfig2SpreadingFactor : byte
+	{
+		_64ChipsPerSymbol = 0b01100000,
+		_128ChipsPerSymbol = 0b01110000,
+		Default = _128ChipsPerSymbol,
+		_256ChipsPerSymbol = 0b10000000,
+		_512ChipsPerSymbol = 0b10010000,
+		_1024ChipsPerSymbol = 0b10100000,
+		_2048ChipsPerSymbol = 0b10110000,
+		_4096ChipsPerSymbol = 0b11000000,
+	}
+
 }
