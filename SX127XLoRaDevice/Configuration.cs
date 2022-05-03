@@ -30,20 +30,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegFrMsb, RegFrMid, RegFrLsb
 		public const double FrequencyDefault = 434000000.0;
 
-		// RegPAConfig based RegPaDac with complexity hidden from user 
-		public enum RegPAConfigPASelect:byte
-		{
-			Rfo = 0b00000000,
-			PABoost = 0b10000000,
-			Default = Rfo
-		}
-
-		internal enum RegPAConfigMaxPower:byte
-		{
-			Min = 0b00000000,
-			Max = 0b01110000,
-			Default = 0b01000000
-		}
 		public const sbyte OutputPowerDefault = 13;
 
 		// Validation constants for outputpower param
@@ -56,20 +42,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		internal const sbyte OutputPowerRfoThreshhold = 0;
 
 		// RegPaRamp appears to be for FSK only ?
-
-		[Flags]
-		internal enum RegHopChannelFlags : byte
-		{
-			PllTimeout = 0b10000000,
-			CrcOnPayload = 0b01000000,
-		}
-
-		internal enum RegHopChannelMask : byte
-		{
-			PllTimeout = 0b10000000,
-			CrcOnPayload = 0b01000000,
-			FhssPresentChannel = 0b01111111,
-		}
 
 		// RegModemConfig1
 		public enum RegModemConfigBandwidth : byte
