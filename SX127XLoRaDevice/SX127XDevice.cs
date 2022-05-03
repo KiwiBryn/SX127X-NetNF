@@ -177,28 +177,28 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 		}
 
-		public void SetMode(Configuration.RegOpModeMode mode)
+		private void SetMode(RegOpModeMode mode)
 		{
-			Configuration.RegOpModeModeFlags regOpModeValue;
+			RegOpModeModeFlags regOpModeValue;
 
-			regOpModeValue = Configuration.RegOpModeModeFlags.LongRangeModeLoRa;
-			regOpModeValue |= Configuration.RegOpModeModeFlags.AcessSharedRegLoRa;
+			regOpModeValue = RegOpModeModeFlags.LongRangeModeLoRa;
+			regOpModeValue |= RegOpModeModeFlags.AcessSharedRegLoRa;
 			if (_frequency > Configuration.SX127XMidBandThreshold)
 			{
-				regOpModeValue |= Configuration.RegOpModeModeFlags.LowFrequencyModeOnHighFrequency;
+				regOpModeValue |= RegOpModeModeFlags.LowFrequencyModeOnHighFrequency;
 			}
 			else
 			{
-				regOpModeValue |= Configuration.RegOpModeModeFlags.LowFrequencyModeOnLowFrequency;
+				regOpModeValue |= RegOpModeModeFlags.LowFrequencyModeOnLowFrequency;
 			}
-			regOpModeValue |= (Configuration.RegOpModeModeFlags)mode;
+			regOpModeValue |= (RegOpModeModeFlags)mode;
 			_registerManager.WriteByte((byte)Registers.RegOpMode, (byte)regOpModeValue);
 		}
 
 		public void Initialise(double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
-			Configuration.RegOcp ocpOn = Configuration.RegOcp.Default, Configuration.RegOcpTrim ocpTrim = Configuration.RegOcpTrim.Default, // RegOcp
+			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
 			Configuration.RegLnaLnaGain lnaGain = Configuration.RegLnaLnaGain.Default, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidth.Default, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRate.Default, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
 			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
@@ -229,7 +229,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Put the device into sleep mode so registers can be changed
-			SetMode(Configuration.RegOpModeMode.Sleep);
+			SetMode(RegOpModeMode.Sleep);
 
 			// Configure RF Carrier frequency 
 			if (frequency != Configuration.FrequencyDefault)
@@ -302,7 +302,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegOcp if any of the settings not defaults
-			if ((ocpOn != Configuration.RegOcp.Default) || (ocpTrim != Configuration.RegOcpTrim.Default))
+			if ((ocpOn != RegOcp.Default) || (ocpTrim != RegOcpTrim.Default))
 			{
 				byte regOcpValue = (byte)ocpTrim;
 
@@ -659,7 +659,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
 
-			SetMode(Configuration.RegOpModeMode.ReceiveContinuous);
+			SetMode(RegOpModeMode.ReceiveContinuous);
 		}
 
 		public void Send(byte[] messageBytes)
@@ -682,14 +682,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
-			SetMode(Configuration.RegOpModeMode.Transmit);
+			SetMode(RegOpModeMode.Transmit);
 		}
 
     public void ChannelActivityDetect()
 		{
 			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio1CadDetect);
 
-			SetMode(Configuration.RegOpModeMode.ChannelActivityDetection);
+			SetMode(RegOpModeMode.ChannelActivityDetection);
     }
 
 		public byte Random()

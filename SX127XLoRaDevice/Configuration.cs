@@ -20,33 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegOpMode mode flags
-		[Flags]
-		internal enum RegOpModeModeFlags : byte
-		{
-			LongRangeModeLoRa = 0b10000000,
-			LongRangeModeFskOok = 0b00000000,
-			LongRangeModeDefault = LongRangeModeFskOok,
-			AcessSharedRegLoRa = 0b00000000,
-			AcessSharedRegFsk = 0b01000000,
-			AcessSharedRegDefault = AcessSharedRegLoRa,
-			LowFrequencyModeOnHighFrequency = 0b00000000,
-			LowFrequencyModeOnLowFrequency = 0b00001000,
-			LowFrequencyModeOnDefault= LowFrequencyModeOnLowFrequency
-		}
-
-		public enum RegOpModeMode : byte
-		{
-			Sleep = 0b00000000,
-			StandBy = 0b00000001,
-			FrequencySynthesisTX = 0b00000010,
-			Transmit = 0b00000011,
-			FrequencySynthesisRX = 0b00000100,
-			ReceiveContinuous = 0b00000101,
-			ReceiveSingle = 0b00000110,
-			ChannelActivityDetection = 0b00000111,
-		};
-
 		// Frequency configuration magic numbers from Semtech SX127X specs
 		internal const double SX127X_FXOSC = 32000000.0;
 		internal const double SX127X_FSTEP = SX127X_FXOSC / 524288.0;
@@ -83,50 +56,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		internal const sbyte OutputPowerRfoThreshhold = 0;
 
 		// RegPaRamp appears to be for FSK only ?
-
-		// RegOcp
-		public enum RegOcp
-		{
-			On = 0b00100000,
-			Off = 0b00000000,
-			Default = On
-		}
-
-		// RegOcpTrim
-		public enum RegOcpTrim
-		{
-			Minimum  = _45mA,
-			_45mA = 0x00,
-			_50mA = 0x01,
-			_55mA = 0x02,
-			_60mA = 0x03,
-			_65mA = 0x04,
-			_70mA = 0x05,
-			_75mA = 0x06,
-			_80mA = 0x07,
-			_85mA = 0x08,
-			_90mA = 0x09,
-			_95mA = 0x0A,
-			_100mA = 0x0B,  
-			Default = _100mA,
-			_105mA = 0x0C,
-			_110mA = 0x0D,
-			_115mA = 0x0E,
-			_120mA = 0x0F,
-			_130mA = 0x10,
-			_140mA = 0x11,
-			_150mA = 0x12,
-			_160mA = 0x13,
-			_170mA = 0x14,
-			_180mA = 0x15,
-			_190mA = 0x16,
-			_200mA = 0x17,
-			_210mA = 0x18,
-			_220mA = 0x19,
-			_230mA = 0x1A,
-			_240mA = 0x1B,
-			Maximum = _240mA
-		};
 
 		// RegLna
 		[Flags]

@@ -121,8 +121,8 @@ namespace devMobile.IoT.SX127x.RangeTester
 								lnaGain: Configuration.RegLnaLnaGain.G3,
 								lnaBoost: true,
 								powerAmplifier: Configuration.RegPAConfigPASelect.PABoost,
-								ocpOn: Configuration.RegOcp.On,
-								ocpTrim: Configuration.RegOcpTrim._150mA,
+								ocpOn: RegOcp.On,
+								ocpTrim: RegOcpTrim._150mA,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
