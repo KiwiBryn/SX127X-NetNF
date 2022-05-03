@@ -57,34 +57,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// RegPaRamp appears to be for FSK only ?
 
-
-		[Flags]
-		internal enum RegIrqFlagsMask : byte
-		{
-			RxTimeoutMask = 0b10000000,
-			RxDoneMask = 0b01000000,
-			PayLoadCrcErrorMask = 0b00100000,
-			ValidHeaderMask = 0b00010000,
-			TxDoneMask = 0b00001000,
-			CadDoneMask = 0b00000100,
-			FhssChangeChannelMask = 0b00000010,
-			CadDetectedMask = 0b00000001,
-		}
-
-		[Flags]
-		internal enum RegIrqFlags : byte
-		{
-			ClearNone = 0b00000000,
-			RxTimeout = 0b10000000,
-			RxDone = 0b01000000,
-			PayLoadCrcError = 0b00100000,
-			ValidHeader = 0b00010000,
-			TxDone = 0b00001000,
-			CadDone = 0b00000100,
-			FhssChangeChannel = 0b00000010,
-			CadDetected = 0b00000001,
-		}
-
 		[Flags]
 		internal enum RegHopChannelFlags : byte
 		{

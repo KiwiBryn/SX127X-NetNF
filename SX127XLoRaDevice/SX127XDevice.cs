@@ -463,7 +463,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		private void InterruptGpioPin_ValueChanged(object sender, PinValueChangedEventArgs pinValueChangedEventArgs)
 		{
-			Byte regIrqFlagsToClear = (byte)Configuration.RegIrqFlags.ClearNone;
+			Byte regIrqFlagsToClear = (byte)RegIrqFlags.ClearNone;
 
 			// Read RegIrqFlags to see what caused the interrupt
 			Byte irqFlags = _registerManager.ReadByte((byte)Registers.RegIrqFlags);
@@ -471,65 +471,65 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			//Console.WriteLine($"IrqFlags 0x{irqFlags:x} Pin:{pinValueChangedEventArgs.PinNumber}");
 
 			// Check RxTimeout for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxTimeoutMask) == (byte)Configuration.RegIrqFlags.RxTimeout)
+			if ((irqFlags & (byte)RegIrqFlagsMask.RxTimeoutMask) == (byte)RegIrqFlags.RxTimeout)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxTimeout;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.RxTimeout;
 
 				ProcessRxTimeout(irqFlags);
 			}
 
 			// Check RxDone for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.RxDoneMask) == (byte)Configuration.RegIrqFlags.RxDone)
+			if ((irqFlags & (byte)RegIrqFlagsMask.RxDoneMask) == (byte)RegIrqFlags.RxDone)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.RxDone;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.RxDone;
 
 				ProcessRxDone(irqFlags);
 			}
 
 			// Check PayLoadCrcError for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlags.PayLoadCrcError)
+			if ((irqFlags & (byte)RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)RegIrqFlags.PayLoadCrcError)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.PayLoadCrcError;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.PayLoadCrcError;
 
 				ProcessPayloadCrcError(irqFlags);
 			}
 
 			// Check ValidHeader for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.ValidHeaderMask) == (byte)Configuration.RegIrqFlags.ValidHeader)
+			if ((irqFlags & (byte)RegIrqFlagsMask.ValidHeaderMask) == (byte)RegIrqFlags.ValidHeader)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.ValidHeader;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.ValidHeader;
 
 				ProcessValidHeader(irqFlags);
 			}
 
 			// Check TxDone for outbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.TxDoneMask) == (byte)Configuration.RegIrqFlags.TxDone)
+			if ((irqFlags & (byte)RegIrqFlagsMask.TxDoneMask) == (byte)RegIrqFlags.TxDone)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.TxDone;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.TxDone;
 
 				ProcessTxDone(irqFlags);
 			}
 
 			// Check Channel Activity Detection done 
-			if (((irqFlags & (byte)Configuration.RegIrqFlagsMask.CadDoneMask) == (byte)Configuration.RegIrqFlags.CadDone))
+			if (((irqFlags & (byte)RegIrqFlagsMask.CadDoneMask) == (byte)RegIrqFlags.CadDone))
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.CadDone;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.CadDone;
 
 				ProcessChannelActivityDetectionDone(irqFlags);
 			}
 
 			// Check FhssChangeChannel for inbound message
-			if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.FhssChangeChannelMask) == (byte)Configuration.RegIrqFlags.FhssChangeChannel)
+			if ((irqFlags & (byte)RegIrqFlagsMask.FhssChangeChannelMask) == (byte)RegIrqFlags.FhssChangeChannel)
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.FhssChangeChannel;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.FhssChangeChannel;
 
 				ProcessFhssChangeChannel(irqFlags);
 			}
 
 			// Check Channel Activity Detected 
-			if (((irqFlags & (byte)Configuration.RegIrqFlagsMask.CadDetectedMask) == (byte)Configuration.RegIrqFlags.CadDetected))
+			if (((irqFlags & (byte)RegIrqFlagsMask.CadDetectedMask) == (byte)RegIrqFlags.CadDetected))
 			{
-				regIrqFlagsToClear |= (byte)Configuration.RegIrqFlags.CadDetected;
+				regIrqFlagsToClear |= (byte)RegIrqFlags.CadDetected;
 
 				ProcessChannelActivityDetected(irqFlags);
 			}
@@ -561,7 +561,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// Check to see if payload CRC is valid
 			if (_rxDoneIgnoreIfCrcInvalid)
 			{
-				if ((irqFlags & (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)Configuration.RegIrqFlagsMask.PayLoadCrcErrorMask)
+				if ((irqFlags & (byte)RegIrqFlagsMask.PayLoadCrcErrorMask) == (byte)RegIrqFlagsMask.PayLoadCrcErrorMask)
 				{
 					return;
 				}
