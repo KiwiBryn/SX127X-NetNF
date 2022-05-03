@@ -552,7 +552,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			if (_rxDoneIgnoreIfCrcMissing)
 			{
 				byte regHopChannel = _registerManager.ReadByte((byte)Registers.RegHopChannel);
-				if ((regHopChannel & (byte)Configuration.RegHopChannelMask.CrcOnPayload) != (byte)Configuration.RegHopChannelFlags.CrcOnPayload)
+				if ((regHopChannel & (byte)RegHopChannelMask.CrcOnPayload) != (byte)RegHopChannelFlags.CrcOnPayload)
 				{
 					return;
 				}
