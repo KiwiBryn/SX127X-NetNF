@@ -101,7 +101,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 #endif
 
 					sx127XDevice.Initialise(Frequency
-								, lnaGain: Configuration.RegLnaLnaGain.Default
+								, lnaGain: RegLnaLnaGain.Default
 								, lnaBoost: true
 								, powerAmplifier: Configuration.RegPAConfigPASelect.PABoost							
 								, rxPayloadCrcOn: true

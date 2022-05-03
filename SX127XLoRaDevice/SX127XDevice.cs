@@ -199,7 +199,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
-			Configuration.RegLnaLnaGain lnaGain = Configuration.RegLnaLnaGain.Default, bool lnaBoost = Configuration.LnaBoostDefault, // RegLna
+			RegLnaLnaGain lnaGain = RegLnaLnaGain.Default, bool lnaBoost = false, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidth.Default, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRate.Default, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
 			Configuration.RegModemConfig2SpreadingFactor spreadingFactor = Configuration.RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
@@ -312,22 +312,22 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegLna if any of the settings not defaults
-			if ((lnaGain != Configuration.RegLnaLnaGain.Default) || (lnaBoost != Configuration.LnaBoostDefault))
+			if ((lnaGain != RegLnaLnaGain.Default) || (lnaBoost != false)) // TODO : Fix lnaBoost default as there must be a better way of doing this
 			{
 				byte regLnaValue = (byte)lnaGain;
 
-				regLnaValue |= (byte)Configuration.RegLnaLnaBoost.LfDefault;
-				regLnaValue |= (byte)Configuration.RegLnaLnaBoost.HfDefault;
+				regLnaValue |= (byte)RegLnaLnaBoost.LfDefault;
+				regLnaValue |= (byte)RegLnaLnaBoost.HfDefault;
 
 				if (lnaBoost)
 				{
 					if (_frequency > Configuration.SX127XMidBandThreshold)
 					{
-						regLnaValue |= (byte)Configuration.RegLnaLnaBoost.HfOn;
+						regLnaValue |= (byte)RegLnaLnaBoost.HfOn;
 					}
 					else
 					{
-						regLnaValue |= (byte)Configuration.RegLnaLnaBoost.LfOn;
+						regLnaValue |= (byte)RegLnaLnaBoost.LfOn;
 					}
 				}
 				_registerManager.WriteByte((byte)Registers.RegLna, regLnaValue);

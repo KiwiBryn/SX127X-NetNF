@@ -21,6 +21,7 @@
     <Compile Include="Configuration.cs" />
     <Compile Include="RegisterManager.cs" />
     <Compile Include="Registers.cs" />
+    <Compile Include="RegLna.cs" />
     <Compile Include="RegOcp.cs" />
     <Compile Include="RegOpMode.cs" />
     <Compile Include="SX127XDevice.cs" />

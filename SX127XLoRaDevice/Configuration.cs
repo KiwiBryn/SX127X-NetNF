@@ -57,30 +57,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// RegPaRamp appears to be for FSK only ?
 
-		// RegLna
-		[Flags]
-		public enum RegLnaLnaGain : byte
-		{
-			G1 = 0b00100000,
-			Default = G1,
-			G2 = 0b01000000,
-			G3 = 0b01100000,
-			G4 = 0b10000000,
-			G5 = 0b10100000,
-			G6 = 0b11000000
-		}
-		public const bool LnaBoostDefault = false;
-
-		[Flags]
-		internal enum RegLnaLnaBoost : byte
-		{
-			LfOn = 0b00011000,
-			LfOff = 0b00000000,
-			LfDefault = LfOff,
-			HfOn = 0b00000011,
-			HfOff = 0b00000000,
-			HfDefault = HfOff
-		}
 
 		[Flags]
 		internal enum RegIrqFlagsMask : byte
