@@ -97,27 +97,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegInvertId
 		internal const byte RegInvertIqDefault = 0b00100110;
 
-		public enum InvertIqRx :byte
-		{
-			On = 0b01000000,
-			Off = 0b00000000,
-			Default = Off
-		}
-
-		public enum InvertIqTx : byte
-		{
-			On = 0b00000001,
-			Default = On,
-			Off = 0b00000000
-		}
-
-		internal enum RegInvertIq2
-		{
-			On = 0x19,
-			Off = 0x1D,
-			Default = Off
-		}
-
 		// RegDetectionThreshold
 		public enum RegisterDetectionThreshold
 		{
