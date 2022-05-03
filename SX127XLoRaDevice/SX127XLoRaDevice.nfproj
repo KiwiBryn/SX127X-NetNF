@@ -18,7 +18,9 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
+    <Compile Include="RegPaConfig.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="RegDioMapping.cs" />
     <Compile Include="RegIrqFlags.cs" />
     <Compile Include="RegisterManager.cs" />
     <Compile Include="Registers.cs" />

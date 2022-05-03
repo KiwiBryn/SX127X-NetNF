@@ -126,10 +126,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// See Table 18 DIO Mapping LoRa® Mode
-			Configuration.RegDioMapping1 regDioMapping1Value = Configuration.RegDioMapping1.Dio0None;
-			regDioMapping1Value |= Configuration.RegDioMapping1.Dio1None;
-			regDioMapping1Value |= Configuration.RegDioMapping1.Dio2None;
-			regDioMapping1Value |= Configuration.RegDioMapping1.Dio3None;
+			RegDioMapping1 regDioMapping1Value = RegDioMapping1.Dio0None;
+			regDioMapping1Value |= RegDioMapping1.Dio1None;
+			regDioMapping1Value |= RegDioMapping1.Dio2None;
+			regDioMapping1Value |= RegDioMapping1.Dio3None;
 			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)regDioMapping1Value);
 
 			// Currently no easy way to test this with available hardware
@@ -197,7 +197,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public void Initialise(double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
-			sbyte outputPower = Configuration.OutputPowerDefault, Configuration.RegPAConfigPASelect powerAmplifier = Configuration.RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
+			sbyte outputPower = Configuration.OutputPowerDefault, RegPAConfigPASelect powerAmplifier = RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
 			RegLnaLnaGain lnaGain = RegLnaLnaGain.Default, bool lnaBoost = false, // RegLna
 			Configuration.RegModemConfigBandwidth bandwidth = Configuration.RegModemConfigBandwidth.Default, Configuration.RegModemConfigCodingRate codingRate = Configuration.RegModemConfigCodingRate.Default, Configuration.RegModemConfigImplicitHeaderModeOn implicitHeaderModeOn = Configuration.RegModemConfigImplicitHeaderModeOn.Default, //RegModemConfig1
@@ -241,11 +241,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegPAConfig & RegPaDac if powerAmplifier/OutputPower settings not defaults
-			if ((powerAmplifier != Configuration.RegPAConfigPASelect.Default) || (outputPower != Configuration.OutputPowerDefault))
+			if ((powerAmplifier != RegPAConfigPASelect.Default) || (outputPower != Configuration.OutputPowerDefault))
 			{
-				if (powerAmplifier == Configuration.RegPAConfigPASelect.PABoost)
+				if (powerAmplifier == RegPAConfigPASelect.PABoost)
 				{
-					byte regPAConfigValue = (byte)Configuration.RegPAConfigPASelect.PABoost;
+					byte regPAConfigValue = (byte)RegPAConfigPASelect.PABoost;
 
 					// Validate the minimum and maximum PABoost outputpower
 					if ((outputPower < Configuration.OutputPowerPABoostMin) || (outputPower > Configuration.OutputPowerPABoostMax))
@@ -256,25 +256,25 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					if (outputPower <= Configuration.OutputPowerPABoostPaDacThreshhold)
 					{
 						// outputPower 0..15 so pOut is 2=17-(15-0)...17=17-(15-15)
-						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Default;
+						regPAConfigValue |= (byte)RegPAConfigMaxPower.Default;
 						regPAConfigValue |= (byte)(outputPower - 2);
 
 						_registerManager.WriteByte((byte)Registers.RegPAConfig, regPAConfigValue);
-						_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
+						_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)RegPaDac.Normal);
 					}
 					else
 					{
 						// outputPower 0..15 so pOut is 5=20-(15-0)...20=20-(15-15) // See https://github.com/adafruit/RadioHead/blob/master/RH_RF95.cpp around line 411 could be 23dBm
-						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Default;
+						regPAConfigValue |= (byte)RegPAConfigMaxPower.Default;
 						regPAConfigValue |= (byte)(outputPower - 5);
 
 						_registerManager.WriteByte((byte)Registers.RegPAConfig, regPAConfigValue);
-						_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)Configuration.RegPaDac.Boost);
+						_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)RegPaDac.Boost);
 					}
 				}
 				else
 				{
-					byte regPAConfigValue = (byte)Configuration.RegPAConfigPASelect.Rfo;
+					byte regPAConfigValue = (byte)RegPAConfigPASelect.Rfo;
 
 					// Validate the minimum and maximum RFO outputPower
 					if ((outputPower < Configuration.OutputPowerRfoMin) || (outputPower > Configuration.OutputPowerRfoMax))
@@ -286,18 +286,18 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					if (outputPower > Configuration.OutputPowerRfoThreshhold)
 					{
 						// pMax 15=10.8+0.6*7 with outputPower 0...15 so pOut is 15=pMax-(15-0)...0=pMax-(15-15) 
-						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Max;
+						regPAConfigValue |= (byte)RegPAConfigMaxPower.Max;
 						regPAConfigValue |= (byte)(outputPower + 0);
 					}
 					else
 					{
 						// pMax 10.8=10.8+0.6*0 with output power 0..15 so pOut is -4=10-(15-0)...10.8=10.8-(15-15)
-						regPAConfigValue |= (byte)Configuration.RegPAConfigMaxPower.Min;
+						regPAConfigValue |= (byte)RegPAConfigMaxPower.Min;
 						regPAConfigValue |= (byte)(outputPower + 4);
 					}
 
 					_registerManager.WriteByte((byte)Registers.RegPAConfig, regPAConfigValue);
-					_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)Configuration.RegPaDac.Normal);
+					_registerManager.WriteByte((byte)Registers.RegPaDac, (byte)RegPaDac.Normal);
 				}
 			}
 
@@ -657,7 +657,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public void Receive()
 		{
-			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0RxDone);
+			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)RegDioMapping1.Dio0RxDone);
 
 			SetMode(RegOpModeMode.ReceiveContinuous);
 		}
@@ -681,13 +681,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_registerManager.WriteByte((byte)Registers.RegPayloadLength, (byte)messageBytes.Length);
 			}
 
-			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio0TxDone);
+			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)RegDioMapping1.Dio0TxDone);
 			SetMode(RegOpModeMode.Transmit);
 		}
 
     public void ChannelActivityDetect()
 		{
-			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)Configuration.RegDioMapping1.Dio1CadDetect);
+			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)RegDioMapping1.Dio1CadDetect);
 
 			SetMode(RegOpModeMode.ChannelActivityDetection);
     }
