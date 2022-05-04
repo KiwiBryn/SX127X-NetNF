@@ -89,14 +89,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegInvertId
 		internal const byte RegInvertIqDefault = 0b00100110;
 
-		// RegDetectionThreshold
-		public enum RegisterDetectionThreshold
-		{
-			SF7toSF12 = 0x0A,
-			SF6 = 0x0c,
-		}
-		public const RegisterDetectionThreshold RegisterDetectionThresholdDefault = RegisterDetectionThreshold.SF7toSF12;
-
 		// RegSyncWord Syncword default for public networks
 		public const byte RegSyncWordDefault = 0x12;
 

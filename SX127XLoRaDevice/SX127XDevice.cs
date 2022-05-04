@@ -211,7 +211,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
 			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
 			InvertIqRx invertIqRX = InvertIqRx.Default, InvertIqTx invertIqTX = InvertIqTx.Default,
-			Configuration.RegisterDetectionThreshold detectionThreshold = Configuration.RegisterDetectionThresholdDefault,
+			RegisterDetectionThreshold detectionThreshold = RegisterDetectionThreshold.Default,
 			byte syncWord = Configuration.RegSyncWordDefault)
 		{
 
