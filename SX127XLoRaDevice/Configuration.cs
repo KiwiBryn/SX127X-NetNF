@@ -70,19 +70,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegHopPeriod
 		public const byte FreqHoppingPeriodDefault = 0x0;
 
-		public const bool LowDataRateOptimizeDefault = false;
-
-		public const bool AgcAutoOnDefault = false;
-
-		// RegModemConfig3
-		public const byte RegModemConfig3LowDataRateOptimizeOn = 0b00001000;
-		public const byte RegModemConfig3LowDataRateOptimizeOff = 0b00000000;
-		public const byte RegModemConfig3LowDataRateOptimizeDefault = RegModemConfig3LowDataRateOptimizeOff;
-
-		public const byte RegModemConfig3AgcAutoOn = 0b00000100;
-		public const byte RegModemConfig3AgcAutoOff = 0b00000000;
-		public const byte RegModemConfig3AgcAutoDefault = RegModemConfig3AgcAutoOff;
-
 		// RegPpmCorrection
 		public const byte ppmCorrectionDefault = 0x0;
 

@@ -24,6 +24,7 @@
     <Compile Include="RegInvertIq.cs" />
     <Compile Include="RegModemConfig2.cs" />
     <Compile Include="RegModemConfig1.cs" />
+    <Compile Include="RegModemConfig3.cs" />
     <Compile Include="RegPaConfig.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="RegDioMapping.cs" />

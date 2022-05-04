@@ -207,7 +207,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte payloadLength = Configuration.PayloadLengthDefault,
 			byte payloadMaxLength = Configuration.PayloadMaxLengthDefault,
 			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
-			bool lowDataRateOptimize = Configuration.LowDataRateOptimizeDefault, bool agcAutoOn = Configuration.AgcAutoOnDefault,
+			RegModemConfig3LowDataRateOptimise lowDataRateOptimize = RegModemConfig3LowDataRateOptimise.Default, RegModemConfig3AgcAutoOn agcAutoOn = RegModemConfig3AgcAutoOn.Default,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
 			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
 			InvertIqRx invertIqRX = InvertIqRx.Default, InvertIqTx invertIqTX = InvertIqTx.Default,
@@ -401,17 +401,14 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegModemConfig3
-			if ((lowDataRateOptimize != false) || (agcAutoOn != false))
+			if ((lowDataRateOptimize != RegModemConfig3LowDataRateOptimise.Default) || (agcAutoOn !=  RegModemConfig3AgcAutoOn.Default))
 			{
-				byte regModemConfig3Value = 0;
-				if (lowDataRateOptimize)
-				{
-					regModemConfig3Value |= Configuration.RegModemConfig3LowDataRateOptimizeOn;
-				}
-				if (agcAutoOn)
-				{
-					regModemConfig3Value |= Configuration.RegModemConfig3AgcAutoOn;
-				}
+				byte regModemConfig3Value = 0; // Buts 7-4 & 1-0 unused
+
+				regModemConfig3Value |= (byte)lowDataRateOptimize;
+
+				regModemConfig3Value |= (byte)agcAutoOn;
+
 				_registerManager.WriteByte((byte)Registers.RegModemConfig3, regModemConfig3Value);
 			}
 
