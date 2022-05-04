@@ -20,15 +20,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// Frequency configuration magic numbers from Semtech SX127X specs
-		internal const double SX127X_FXOSC = 32000000.0;
-		internal const double SX127X_FSTEP = SX127X_FXOSC / 524288.0;
 		internal const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
+
 		internal const int RssiAdjustmentHF = -157;
 		internal const int RssiAdjustmentLF = -164;
-
-		// RegFrMsb, RegFrMid, RegFrLsb
-		public const double FrequencyDefault = 434000000.0;
 
 		public const sbyte OutputPowerDefault = 13;
 

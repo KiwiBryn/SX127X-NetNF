@@ -25,6 +25,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public sealed class SX127XDevice
 	{
+		// Frequency configuration magic numbers from Semtech SX127X specs used to calculate RegFrMsb, RegFrMid, RegFrLsb 
+		private const double SX127X_FXOSC = 32000000.0;
+		private const double SX127X_FSTEP = SX127X_FXOSC / 524288.0;
+
+		public const double FrequencyDefault = 434000000.0;
+
 		public const byte MessageLengthMinimum = 0;
 		public const byte MessageLengthMaximum = 128;
 
@@ -88,7 +94,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private readonly GpioController _gpioController = null;
 		private readonly RegisterManager _registerManager = null;
 		private readonly Object _regFifoLock = new object();
-		private double _frequency = Configuration.FrequencyDefault;
+		private double _frequency = FrequencyDefault;
 		private bool _rxDoneIgnoreIfCrcMissing = true;
 		private bool _rxDoneIgnoreIfCrcInvalid = true;
 
@@ -195,7 +201,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			_registerManager.WriteByte((byte)Registers.RegOpMode, (byte)regOpModeValue);
 		}
 
-		public void Initialise(double frequency = Configuration.FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
+		public void Initialise(double frequency = FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
 			sbyte outputPower = Configuration.OutputPowerDefault, RegPAConfigPASelect powerAmplifier = RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
@@ -232,9 +238,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			SetMode(RegOpModeMode.Sleep);
 
 			// Configure RF Carrier frequency 
-			if (frequency != Configuration.FrequencyDefault)
+			if (frequency != FrequencyDefault)
 			{
-				byte[] bytes = BitConverter.GetBytes((long)(frequency / Configuration.SX127X_FSTEP));
+				byte[] bytes = BitConverter.GetBytes((long)(frequency / SX127X_FSTEP));
 				_registerManager.WriteByte((byte)Registers.RegFrMsb, bytes[2]);
 				_registerManager.WriteByte((byte)Registers.RegFrMid, bytes[1]);
 				_registerManager.WriteByte((byte)Registers.RegFrLsb, bytes[0]);
