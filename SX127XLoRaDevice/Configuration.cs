@@ -20,11 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		internal const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
-
-		internal const int RssiAdjustmentHF = -157;
-		internal const int RssiAdjustmentLF = -164;
-
 		// RegModemConfig2 for MSb RegSymbTimeoutLsb for LSB
 		public const ushort SymbolTimeoutDefault = 0x64;
 		public const ushort symbolTimeoutMin = 0x0;

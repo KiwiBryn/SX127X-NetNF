@@ -48,6 +48,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const sbyte OutputPowerRfoMax = 15;
 		private const sbyte OutputPowerRfoThreshhold = 0;
 
+		//RegRssiValue magic numbers for calculating low/high band RSSI
+		private const double SX127XMidBandThreshold = 525000000.0; // Search for RF_MID_BAND_THRESH GitHub LoRaNet LoRaMac-node/src/boards/sx1276-board.h
+		private const int RssiAdjustmentHF = -157;
+		private const int RssiAdjustmentLF = -164;
+
 
 		public class OnRxTimeoutEventArgs : EventArgs
 		{
@@ -201,7 +206,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			regOpModeValue = RegOpModeModeFlags.LongRangeModeLoRa;
 			regOpModeValue |= RegOpModeModeFlags.AcessSharedRegLoRa;
-			if (_frequency > Configuration.SX127XMidBandThreshold)
+			if (_frequency > SX127XMidBandThreshold)
 			{
 				regOpModeValue |= RegOpModeModeFlags.LowFrequencyModeOnHighFrequency;
 			}
@@ -339,7 +344,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 				if (lnaBoost)
 				{
-					if (_frequency > Configuration.SX127XMidBandThreshold)
+					if (_frequency > SX127XMidBandThreshold)
 					{
 						regLnaValue |= (byte)RegLnaLnaBoost.HfOn;
 					}
@@ -598,23 +603,23 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			float packetSnr = _registerManager.ReadByte((byte)Registers.RegPktSnrValue) * 0.25f;
 
 			int rssi = _registerManager.ReadByte((byte)Registers.RegRssiValue);
-			if (_frequency > Configuration.SX127XMidBandThreshold)
+			if (_frequency > SX127XMidBandThreshold)
 			{
-				rssi = Configuration.RssiAdjustmentHF + rssi;
+				rssi = RssiAdjustmentHF + rssi;
 			}
 			else
 			{
-				rssi = Configuration.RssiAdjustmentLF + rssi;
+				rssi = RssiAdjustmentLF + rssi;
 			}
 
 			int packetRssi = _registerManager.ReadByte((byte)Registers.RegPktRssiValue);
-			if (_frequency > Configuration.SX127XMidBandThreshold)
+			if (_frequency > SX127XMidBandThreshold)
 			{
-				packetRssi = Configuration.RssiAdjustmentHF + packetRssi;
+				packetRssi = RssiAdjustmentHF + packetRssi;
 			}
 			else
 			{
-				packetRssi = Configuration.RssiAdjustmentLF + packetRssi;
+				packetRssi = RssiAdjustmentLF + packetRssi;
 			}
 
 			OnDataReceivedEventArgs receiveArgs = new OnDataReceivedEventArgs
