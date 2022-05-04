@@ -28,5 +28,4 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		_2048ChipsPerSymbol = 0b10110000,
 		_4096ChipsPerSymbol = 0b11000000,
 	}
-
 }
