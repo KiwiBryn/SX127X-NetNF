@@ -37,6 +37,18 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const byte RegisterAddressReadMask = 0X7f;
 		private const byte RegisterAddressWriteMask = 0x80;
 
+		// RegPAConfig constants for outputpower param validation and RFO to PABoost tipping point.
+		public const sbyte OutputPowerDefault = 13;
+
+		private const sbyte OutputPowerPABoostMin = 2;
+		private const sbyte OutputPowerPABoostMax = 20;
+		private const sbyte OutputPowerPABoostPaDacThreshhold = 17;
+
+		private const sbyte OutputPowerRfoMin = -4;
+		private const sbyte OutputPowerRfoMax = 15;
+		private const sbyte OutputPowerRfoThreshhold = 0;
+
+
 		public class OnRxTimeoutEventArgs : EventArgs
 		{
 		}
@@ -203,7 +215,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public void Initialise(double frequency = FrequencyDefault, // RegFrMsb, RegFrMid, RegFrLsb
 			bool rxDoneignoreIfCrcMissing = true, bool rxDoneignoreIfCrcInvalid = true,
-			sbyte outputPower = Configuration.OutputPowerDefault, RegPAConfigPASelect powerAmplifier = RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
+			sbyte outputPower = OutputPowerDefault, RegPAConfigPASelect powerAmplifier = RegPAConfigPASelect.Default, // RegPAConfig & RegPaDac
 			RegOcp ocpOn = RegOcp.Default, RegOcpTrim ocpTrim = RegOcpTrim.Default, // RegOcp
 			RegLnaLnaGain lnaGain = RegLnaLnaGain.Default, bool lnaBoost = false, // RegLna
 			RegModemConfig1Bandwidth bandwidth = RegModemConfig1Bandwidth.Default, RegModemConfig1CodingRate codingRate = RegModemConfig1CodingRate.Default, RegModemConfig1ImplicitHeaderModeOn implicitHeaderModeOn = RegModemConfig1ImplicitHeaderModeOn.Default, //RegModemConfig1
@@ -247,19 +259,19 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// Set RegPAConfig & RegPaDac if powerAmplifier/OutputPower settings not defaults
-			if ((powerAmplifier != RegPAConfigPASelect.Default) || (outputPower != Configuration.OutputPowerDefault))
+			if ((powerAmplifier != RegPAConfigPASelect.Default) || (outputPower != OutputPowerDefault))
 			{
 				if (powerAmplifier == RegPAConfigPASelect.PABoost)
 				{
 					byte regPAConfigValue = (byte)RegPAConfigPASelect.PABoost;
 
 					// Validate the minimum and maximum PABoost outputpower
-					if ((outputPower < Configuration.OutputPowerPABoostMin) || (outputPower > Configuration.OutputPowerPABoostMax))
+					if ((outputPower < OutputPowerPABoostMin) || (outputPower > OutputPowerPABoostMax))
 					{
-						throw new ApplicationException($"PABoost {outputPower}dBm Min power {Configuration.OutputPowerPABoostMin} to Max power {Configuration.OutputPowerPABoostMax}");
+						throw new ApplicationException($"PABoost {outputPower}dBm Min power {OutputPowerPABoostMin} to Max power {OutputPowerPABoostMax}");
 					}
 
-					if (outputPower <= Configuration.OutputPowerPABoostPaDacThreshhold)
+					if (outputPower <= OutputPowerPABoostPaDacThreshhold)
 					{
 						// outputPower 0..15 so pOut is 2=17-(15-0)...17=17-(15-15)
 						regPAConfigValue |= (byte)RegPAConfigMaxPower.Default;
@@ -283,13 +295,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 					byte regPAConfigValue = (byte)RegPAConfigPASelect.Rfo;
 
 					// Validate the minimum and maximum RFO outputPower
-					if ((outputPower < Configuration.OutputPowerRfoMin) || (outputPower > Configuration.OutputPowerRfoMax))
+					if ((outputPower < OutputPowerRfoMin) || (outputPower > OutputPowerRfoMax))
 					{
-						throw new ApplicationException($"RFO {outputPower}dBm Min power {Configuration.OutputPowerRfoMin} to Max power {Configuration.OutputPowerRfoMax}");
+						throw new ApplicationException($"RFO {outputPower}dBm Min power {OutputPowerRfoMin} to Max power {OutputPowerRfoMax}");
 					}
 
 					// Set MaxPower and Power calculate pOut = PMax-(15-outputPower), pMax=10.8 + 0.6*MaxPower 
-					if (outputPower > Configuration.OutputPowerRfoThreshhold)
+					if (outputPower > OutputPowerRfoThreshhold)
 					{
 						// pMax 15=10.8+0.6*7 with outputPower 0...15 so pOut is 15=pMax-(15-0)...0=pMax-(15-15) 
 						regPAConfigValue |= (byte)RegPAConfigMaxPower.Max;

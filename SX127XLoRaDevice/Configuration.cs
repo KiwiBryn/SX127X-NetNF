@@ -25,19 +25,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		internal const int RssiAdjustmentHF = -157;
 		internal const int RssiAdjustmentLF = -164;
 
-		public const sbyte OutputPowerDefault = 13;
-
-		// Validation constants for outputpower param
-		internal const sbyte OutputPowerPABoostMin = 2;
-		internal const sbyte OutputPowerPABoostMax = 20;
-		internal const sbyte OutputPowerPABoostPaDacThreshhold = 17;
-
-		internal const sbyte OutputPowerRfoMin = -4;
-		internal const sbyte OutputPowerRfoMax = 15;
-		internal const sbyte OutputPowerRfoThreshhold = 0;
-
-		// RegPaRamp appears to be for FSK only ?
-
 		// RegModemConfig2 for MSb RegSymbTimeoutLsb for LSB
 		public const ushort SymbolTimeoutDefault = 0x64;
 		public const ushort symbolTimeoutMin = 0x0;
