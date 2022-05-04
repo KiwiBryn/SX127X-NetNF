@@ -16,7 +16,10 @@
 //---------------------------------------------------------------------------------
 namespace devMobile.IoT.SX127xLoRaDevice
 {
+	using System;
+
 	// RegModemConfig2
+	[Flags]
 	public enum RegModemConfig2SpreadingFactor : byte
 	{
 		_64ChipsPerSymbol = 0b01100000,
@@ -27,5 +30,21 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		_1024ChipsPerSymbol = 0b10100000,
 		_2048ChipsPerSymbol = 0b10110000,
 		_4096ChipsPerSymbol = 0b11000000,
+	}
+
+	[Flags]
+	public enum RegModemConfig2TxContinuousMode
+	{
+		On = 0b00001000,
+		Off = 0b00000000,
+		Default = Off
+	}
+
+	[Flags]
+	public enum RegModemConfig2RxPayloadCrc
+	{
+		On = 0b00000100,
+		Off = 0b00000000,
+		Default = Off
 	}
 }

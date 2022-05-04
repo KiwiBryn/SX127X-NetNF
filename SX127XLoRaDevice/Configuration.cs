@@ -43,14 +43,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// RegPaRamp appears to be for FSK only ?
 
-		public const byte RegModemConfig2TxContinuousModeOn = 0b00001000;
-		public const byte RegModemConfig2TxContinuousModeOff = 0b00000000;
-		public const byte RegModemConfig2TxContinuousModeDefault = RegModemConfig2TxContinuousModeOff;
-
-		public const byte RegModemConfig2RxPayloadCrcOn = 0b00000100;
-		public const byte RegModemConfig2RxPayloadCrcOff = 0b00000000;
-		public const byte RegModemConfig2RxPayloadCrcDefault = RegModemConfig2RxPayloadCrcOff;
-
 		// RegModemConfig2 for MSb RegSymbTimeoutLsb for LSB
 		public const ushort SymbolTimeoutDefault = 0x64;
 		public const ushort symbolTimeoutMin = 0x0;

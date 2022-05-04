@@ -353,11 +353,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				byte RegModemConfig2Value = (byte)spreadingFactor;
 				if (txContinuousMode)
 				{
-					RegModemConfig2Value |= Configuration.RegModemConfig2TxContinuousModeOn;
+					RegModemConfig2Value |= (byte)RegModemConfig2TxContinuousMode.On;
 				}
 				if (rxPayloadCrcOn)
 				{
-					RegModemConfig2Value |= Configuration.RegModemConfig2RxPayloadCrcOn;
+					RegModemConfig2Value |= (byte)RegModemConfig2RxPayloadCrc.On;
 				}
 				// Get the MSB of SymbolTimeout
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);
