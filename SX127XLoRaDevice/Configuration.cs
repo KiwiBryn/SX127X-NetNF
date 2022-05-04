@@ -65,15 +65,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegPpmCorrection
 		public const byte ppmCorrectionDefault = 0x0;
 
-		// RegInvertId
-		internal const byte RegInvertIqDefault = 0b00100110;
-
 		// RegSyncWord Syncword default for public networks
 		public const byte RegSyncWordDefault = 0x12;
 
 		// The Semtech ID Relating to the Silicon revision
 		internal const byte RegVersionValueExpected = 0x12;
-
-		internal const byte RegPaDacPABoostThreshold = 20;
 	}
 }

@@ -427,7 +427,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			// TX & RX inversion plus optimisation specialness
 			if ((invertIqRX != InvertIqRx.Default) || (invertIqTX != InvertIqTx.Default))
 			{
-				byte regInvertIqValue = Configuration.RegInvertIqDefault;
+				byte regInvertIqValue = 0b00100110; // Bits 5-1 are reserved and are 0x13
 
 				if (invertIqRX == InvertIqRx.On)
 				{
