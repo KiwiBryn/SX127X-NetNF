@@ -28,7 +28,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		RegFrMid = 0x7,
 		RegFrLsb = 0x08,
 		RegPAConfig = 0x09,
-		//RegPARamp = 0x0A,
+		//RegPARamp = 0x0A, appears to be for FSK only
 		RegOcp = 0x0B,
 		RegLna = 0x0C,
 		RegFifoAddrPtr = 0x0D,
@@ -63,9 +63,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegFeiLsb = 0x2A
 		// Reserved 0x2B
 		RegRssiWideband = 0x2C, // Useful for random number generation
-										// Reserved 0x2D-0x2E
-										// RegIifFreq2 = 0x2F
-										// RegIifFreq1 = 0x30
+		// Reserved 0x2D-0x2E
+		// RegIifFreq2 = 0x2F
+		// RegIifFreq1 = 0x30
 		RegDetectOptimize = 0x31,
 		// Reserved 0x32
 		RegInvertIq = 0x33,
