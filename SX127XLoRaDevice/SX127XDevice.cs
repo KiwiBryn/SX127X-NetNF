@@ -209,7 +209,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
 			bool lowDataRateOptimize = Configuration.LowDataRateOptimizeDefault, bool agcAutoOn = Configuration.AgcAutoOnDefault,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
-			Configuration.RegDetectOptimizeDectionOptimize detectionOptimize = Configuration.RegDetectOptimizeDectionOptimizeDefault,
+			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
 			InvertIqRx invertIqRX = InvertIqRx.Default, InvertIqTx invertIqTX = InvertIqTx.Default,
 			Configuration.RegisterDetectionThreshold detectionThreshold = Configuration.RegisterDetectionThresholdDefault,
 			byte syncWord = Configuration.RegSyncWordDefault)
@@ -422,7 +422,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegDetectOptimize
-			if (detectionOptimize != Configuration.RegDetectOptimizeDectionOptimizeDefault)
+			if (detectionOptimize != RegDetectOptimizeDetectionOptimize.Default)
 			{
 				_registerManager.WriteByte((byte)Registers.RegDetectOptimize, (byte)detectionOptimize);
 			}

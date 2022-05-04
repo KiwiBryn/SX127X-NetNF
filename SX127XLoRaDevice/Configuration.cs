@@ -86,14 +86,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegPpmCorrection
 		public const byte ppmCorrectionDefault = 0x0;
 
-		// RegDetectOptimize
-		public enum RegDetectOptimizeDectionOptimize
-		{
-			SF7toSF12 = 0x03,
-			SF6 = 0x05,
-		};
-		public const RegDetectOptimizeDectionOptimize RegDetectOptimizeDectionOptimizeDefault = RegDetectOptimizeDectionOptimize.SF7toSF12;
-
 		// RegInvertId
 		internal const byte RegInvertIqDefault = 0b00100110;
 
