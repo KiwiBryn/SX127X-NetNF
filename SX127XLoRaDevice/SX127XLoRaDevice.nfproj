@@ -18,10 +18,12 @@
   </PropertyGroup>
   <Import Project="$(NanoFrameworkProjectSystemPath)NFProjectSystem.props" Condition="Exists('$(NanoFrameworkProjectSystemPath)NFProjectSystem.props')" />
   <ItemGroup>
+    <Compile Include="RegDetectionThreshold.cs" />
     <Compile Include="RegDetectOptimise.cs" />
     <Compile Include="RegHopChannel.cs" />
     <Compile Include="RegInvertIq.cs" />
-    <Compile Include="RegModemConfig.cs" />
+    <Compile Include="RegModemConfig2.cs" />
+    <Compile Include="RegModemConfig1.cs" />
     <Compile Include="RegPaConfig.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="RegDioMapping.cs" />
