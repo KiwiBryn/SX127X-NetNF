@@ -53,6 +53,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const int RssiAdjustmentHF = -157;
 		private const int RssiAdjustmentLF = -164;
 
+		// RegModemConfig2 for MSb RegSymbTimeoutLsb for LSB
+		public const ushort SymbolTimeoutDefault = 0x64;
+		private const ushort SymbolTimeoutMin = 0x0;
+		private const ushort SymbolTimeoutMax = 0x1023;
+		private const byte SymbolTimeoutMsbMask = 0b0011;
+
 		// The Semtech ID Relating to the Silicon revision in RegVersion
 		private const byte RegVersionValueExpected = 0x12;
 
@@ -227,7 +233,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegLnaLnaGain lnaGain = RegLnaLnaGain.Default, bool lnaBoost = false, // RegLna
 			RegModemConfig1Bandwidth bandwidth = RegModemConfig1Bandwidth.Default, RegModemConfig1CodingRate codingRate = RegModemConfig1CodingRate.Default, RegModemConfig1ImplicitHeaderModeOn implicitHeaderModeOn = RegModemConfig1ImplicitHeaderModeOn.Default, //RegModemConfig1
 			RegModemConfig2SpreadingFactor spreadingFactor = RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
-			ushort symbolTimeout = Configuration.SymbolTimeoutDefault,
+			ushort symbolTimeout = SymbolTimeoutDefault,
 			ushort preambleLength = Configuration.PreambleLengthDefault,
 			byte payloadLength = Configuration.PayloadLengthDefault,
 			byte payloadMaxLength = Configuration.PayloadMaxLengthDefault,
@@ -367,13 +373,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				_registerManager.WriteByte((byte)Registers.RegModemConfig1, regModemConfig1Value);
 			}
 
-			if ((symbolTimeout < Configuration.symbolTimeoutMin) || (symbolTimeout > Configuration.symbolTimeoutMax))
+			if ((symbolTimeout < SymbolTimeoutMin) || (symbolTimeout > SymbolTimeoutMax))
 			{
-				throw new ArgumentException($"symbolTimeout must be between {Configuration.symbolTimeoutMin} and {Configuration.symbolTimeoutMax}", nameof(symbolTimeout));
+				throw new ArgumentException($"symbolTimeout must be between {SymbolTimeoutMin} and {SymbolTimeoutMax}", nameof(symbolTimeout));
 			}
 
 			// Set regModemConfig2 if any of the settings not defaults
-			if ((spreadingFactor != RegModemConfig2SpreadingFactor.Default) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != Configuration.SymbolTimeoutDefault))
+			if ((spreadingFactor != RegModemConfig2SpreadingFactor.Default) || (txContinuousMode != false) | (rxPayloadCrcOn != false) || (symbolTimeout != SymbolTimeoutDefault))
 			{
 				byte RegModemConfig2Value = (byte)spreadingFactor;
 				if (txContinuousMode)
@@ -388,13 +394,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);
 
 				// Only the zeroth & second bit of byte matter
-				symbolTimeoutBytes[1] &= Configuration.SymbolTimeoutMsbMask;
+				symbolTimeoutBytes[1] &= SymbolTimeoutMsbMask;
 				RegModemConfig2Value |= symbolTimeoutBytes[1];
 				_registerManager.WriteByte((byte)Registers.RegModemConfig2, RegModemConfig2Value);
 			}
 
 			// RegModemConfig2.SymbTimout + RegSymbTimeoutLsb
-			if (symbolTimeout != Configuration.SymbolTimeoutDefault)
+			if (symbolTimeout != SymbolTimeoutDefault)
 			{
 				// Get the LSB of SymbolTimeout
 				byte[] symbolTimeoutBytes = BitConverter.GetBytes(symbolTimeout);

@@ -20,13 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegModemConfig2 for MSb RegSymbTimeoutLsb for LSB
-		public const ushort SymbolTimeoutDefault = 0x64;
-		public const ushort symbolTimeoutMin = 0x0;
-		public const ushort symbolTimeoutMax = 0x1023;
-
-		public const byte SymbolTimeoutMsbMask = 0b0011;
-
 		// RegReambleMsb & RegReambleLsb
 		public const ushort PreambleLengthDefault = 0x08;
 
