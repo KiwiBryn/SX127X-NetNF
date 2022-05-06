@@ -26,7 +26,6 @@
     <Compile Include="RegModemConfig1.cs" />
     <Compile Include="RegModemConfig3.cs" />
     <Compile Include="RegPaConfig.cs" />
-    <Compile Include="Configuration.cs" />
     <Compile Include="RegDioMapping.cs" />
     <Compile Include="RegIrqFlags.cs" />
     <Compile Include="RegisterManager.cs" />
