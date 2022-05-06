@@ -44,8 +44,5 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		// RegSyncWord Syncword default for public networks
 		public const byte RegSyncWordDefault = 0x12;
-
-		// The Semtech ID Relating to the Silicon revision
-		internal const byte RegVersionValueExpected = 0x12;
 	}
 }

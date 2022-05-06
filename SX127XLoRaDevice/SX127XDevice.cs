@@ -53,6 +53,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const int RssiAdjustmentHF = -157;
 		private const int RssiAdjustmentLF = -164;
 
+		// The Semtech ID Relating to the Silicon revision in RegVersion
+		private const byte RegVersionValueExpected = 0x12;
 
 		public class OnRxTimeoutEventArgs : EventArgs
 		{
@@ -143,7 +145,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			// Once the pins setup check that SX127X chip is present
 			Byte regVersionValue = _registerManager.ReadByte((byte)Registers.RegVersion);
-			if (regVersionValue != Configuration.RegVersionValueExpected)
+			if (regVersionValue != RegVersionValueExpected)
 			{
 				throw new ApplicationException("Semtech SX127X not found");
 			}
