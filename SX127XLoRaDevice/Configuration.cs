@@ -20,7 +20,5 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegSyncWord Syncword default for public networks
-		public const byte RegSyncWordDefault = 0x12;
 	}
 }

@@ -71,6 +71,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegHopPeriod
 		public const byte FreqHoppingPeriodDefault = 0x0;
 
+		// RegSyncWord Syncword default for public networks
+		public const byte RegSyncWordDefault = 0x12;
+
 		// RegPpmCorrection
 		public const byte ppmCorrectionDefault = 0x0;
 
@@ -258,7 +261,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
 			InvertIqRx invertIqRX = InvertIqRx.Default, InvertIqTx invertIqTX = InvertIqTx.Default,
 			RegisterDetectionThreshold detectionThreshold = RegisterDetectionThreshold.Default,
-			byte syncWord = Configuration.RegSyncWordDefault)
+			byte syncWord = RegSyncWordDefault)
 		{
 
 			_frequency = frequency; // Store this away for RSSI adjustments
@@ -498,7 +501,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegSyncWordDefault 
-			if (syncWord != Configuration.RegSyncWordDefault)
+			if (syncWord != RegSyncWordDefault)
 			{
 				_registerManager.WriteByte((byte)Registers.RegSyncWord, syncWord);
 			}
