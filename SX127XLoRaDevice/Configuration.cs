@@ -20,9 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegHopPeriod
-		public const byte FreqHoppingPeriodDefault = 0x0;
-
 		// RegPpmCorrection
 		public const byte ppmCorrectionDefault = 0x0;
 

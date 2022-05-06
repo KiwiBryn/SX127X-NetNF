@@ -68,6 +68,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegMaxPayloadLength
 		public const byte PayloadMaxLengthDefault = 0xff;
 
+		// RegHopPeriod
+		public const byte FreqHoppingPeriodDefault = 0x0;
+
 		// The Semtech ID Relating to the Silicon revision in RegVersion
 		private const byte RegVersionValueExpected = 0x12;
 
@@ -246,7 +249,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			ushort preambleLength = PreambleLengthDefault,
 			byte payloadLength = PayloadLengthDefault,
 			byte payloadMaxLength = PayloadMaxLengthDefault,
-			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
+			byte freqHoppingPeriod = FreqHoppingPeriodDefault,
 			RegModemConfig3LowDataRateOptimise lowDataRateOptimize = RegModemConfig3LowDataRateOptimise.Default, RegModemConfig3AgcAutoOn agcAutoOn = RegModemConfig3AgcAutoOn.Default,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
 			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
@@ -435,7 +438,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegHopPeriod
-			if (freqHoppingPeriod != Configuration.FreqHoppingPeriodDefault)
+			if (freqHoppingPeriod != FreqHoppingPeriodDefault)
 			{
 				_registerManager.WriteByte((byte)Registers.RegHopPeriod, freqHoppingPeriod);
 			}
