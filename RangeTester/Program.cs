@@ -118,11 +118,11 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 					_sx127XDevice.Initialise(
 								Frequency,
-								lnaGain: Configuration.RegLnaLnaGain.G3,
+								lnaGain: RegLnaLnaGain.G3,
 								lnaBoost: true,
-								powerAmplifier: Configuration.RegPAConfigPASelect.PABoost,
-								ocpOn: Configuration.RegOcp.On,
-								ocpTrim: Configuration.RegOcpTrim._150mA,
+								powerAmplifier: RegPAConfigPASelect.PABoost,
+								ocpOn: RegOcp.On,
+								ocpTrim: RegOcpTrim._150mA,
 								rxPayloadCrcOn: true,
 								rxDoneignoreIfCrcMissing: false
 								);
