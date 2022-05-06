@@ -71,6 +71,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegHopPeriod
 		public const byte FreqHoppingPeriodDefault = 0x0;
 
+		// RegPpmCorrection
+		public const byte ppmCorrectionDefault = 0x0;
+
 		// The Semtech ID Relating to the Silicon revision in RegVersion
 		private const byte RegVersionValueExpected = 0x12;
 
@@ -251,7 +254,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			byte payloadMaxLength = PayloadMaxLengthDefault,
 			byte freqHoppingPeriod = FreqHoppingPeriodDefault,
 			RegModemConfig3LowDataRateOptimise lowDataRateOptimize = RegModemConfig3LowDataRateOptimise.Default, RegModemConfig3AgcAutoOn agcAutoOn = RegModemConfig3AgcAutoOn.Default,
-			byte ppmCorrection = Configuration.ppmCorrectionDefault,
+			byte ppmCorrection = ppmCorrectionDefault,
 			RegDetectOptimizeDetectionOptimize detectionOptimize = RegDetectOptimizeDetectionOptimize.Default,
 			InvertIqRx invertIqRX = InvertIqRx.Default, InvertIqTx invertIqTX = InvertIqTx.Default,
 			RegisterDetectionThreshold detectionThreshold = RegisterDetectionThreshold.Default,
@@ -456,7 +459,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegPpmCorrection
-			if (ppmCorrection != Configuration.ppmCorrectionDefault)
+			if (ppmCorrection != ppmCorrectionDefault)
 			{
 				_registerManager.WriteByte((byte)Registers.RegPpmCorrection, ppmCorrection);
 			}

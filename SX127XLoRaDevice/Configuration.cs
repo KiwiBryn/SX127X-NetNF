@@ -20,9 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegPpmCorrection
-		public const byte ppmCorrectionDefault = 0x0;
-
 		// RegSyncWord Syncword default for public networks
 		public const byte RegSyncWordDefault = 0x12;
 	}
