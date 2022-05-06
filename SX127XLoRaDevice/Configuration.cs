@@ -20,12 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegPayloadLength
-		public const byte PayloadLengthDefault = 0x01;
-
-		// RegMaxPayloadLength
-		public const byte PayloadMaxLengthDefault = 0xff;
-
 		// RegHopPeriod
 		public const byte FreqHoppingPeriodDefault = 0x0;
 

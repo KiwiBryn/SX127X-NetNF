@@ -62,6 +62,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		// RegReambleMsb & RegReambleLsb
 		public const ushort PreambleLengthDefault = 0x08;
 
+		// RegPayloadLength
+		public const byte PayloadLengthDefault = 0x01;
+
+		// RegMaxPayloadLength
+		public const byte PayloadMaxLengthDefault = 0xff;
+
 		// The Semtech ID Relating to the Silicon revision in RegVersion
 		private const byte RegVersionValueExpected = 0x12;
 
@@ -238,8 +244,8 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegModemConfig2SpreadingFactor spreadingFactor = RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = SymbolTimeoutDefault,
 			ushort preambleLength = PreambleLengthDefault,
-			byte payloadLength = Configuration.PayloadLengthDefault,
-			byte payloadMaxLength = Configuration.PayloadMaxLengthDefault,
+			byte payloadLength = PayloadLengthDefault,
+			byte payloadMaxLength = PayloadMaxLengthDefault,
 			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
 			RegModemConfig3LowDataRateOptimise lowDataRateOptimize = RegModemConfig3LowDataRateOptimise.Default, RegModemConfig3AgcAutoOn agcAutoOn = RegModemConfig3AgcAutoOn.Default,
 			byte ppmCorrection = Configuration.ppmCorrectionDefault,
@@ -417,13 +423,13 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegPayloadLength
-			if (payloadLength != Configuration.PayloadLengthDefault)
+			if (payloadLength != PayloadLengthDefault)
 			{
 				_registerManager.WriteByte((byte)Registers.RegPayloadLength, payloadLength);
 			}
 
 			// RegMaxPayloadLength
-			if (payloadMaxLength != Configuration.PayloadMaxLengthDefault)
+			if (payloadMaxLength != PayloadMaxLengthDefault)
 			{
 				_registerManager.WriteByte((byte)Registers.RegMaxPayloadLength, payloadMaxLength);
 			}
