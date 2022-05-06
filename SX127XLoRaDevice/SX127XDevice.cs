@@ -59,6 +59,9 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private const ushort SymbolTimeoutMax = 0x1023;
 		private const byte SymbolTimeoutMsbMask = 0b0011;
 
+		// RegReambleMsb & RegReambleLsb
+		public const ushort PreambleLengthDefault = 0x08;
+
 		// The Semtech ID Relating to the Silicon revision in RegVersion
 		private const byte RegVersionValueExpected = 0x12;
 
@@ -234,7 +237,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			RegModemConfig1Bandwidth bandwidth = RegModemConfig1Bandwidth.Default, RegModemConfig1CodingRate codingRate = RegModemConfig1CodingRate.Default, RegModemConfig1ImplicitHeaderModeOn implicitHeaderModeOn = RegModemConfig1ImplicitHeaderModeOn.Default, //RegModemConfig1
 			RegModemConfig2SpreadingFactor spreadingFactor = RegModemConfig2SpreadingFactor.Default, bool txContinuousMode = false, bool rxPayloadCrcOn = false,
 			ushort symbolTimeout = SymbolTimeoutDefault,
-			ushort preambleLength = Configuration.PreambleLengthDefault,
+			ushort preambleLength = PreambleLengthDefault,
 			byte payloadLength = Configuration.PayloadLengthDefault,
 			byte payloadMaxLength = Configuration.PayloadMaxLengthDefault,
 			byte freqHoppingPeriod = Configuration.FreqHoppingPeriodDefault,
@@ -408,7 +411,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegPreambleMsb + RegPreambleLsb
-			if (preambleLength != Configuration.PreambleLengthDefault)
+			if (preambleLength != PreambleLengthDefault)
 			{
 				_registerManager.WriteWordMsbLsb((Byte)Registers.RegPreambleMsb, preambleLength);
 			}

@@ -20,9 +20,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 	public static class Configuration
 	{
-		// RegReambleMsb & RegReambleLsb
-		public const ushort PreambleLengthDefault = 0x08;
-
 		// RegPayloadLength
 		public const byte PayloadLengthDefault = 0x01;
 
