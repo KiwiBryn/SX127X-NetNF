@@ -26,6 +26,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 	using System.Device.Gpio;
 	using System.Device.Spi;
 
+#if ESP32_WROOM_32_LORA_1_CHANNEL
+	using nanoFramework.Hardware.Esp32;
+#endif
+
 	class Program
 	{
 		private const double Frequency = 915000000.0;
@@ -45,7 +49,6 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			int sendCount = 0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
 			int chipSelectLine = Gpio.IO16;
-			int interruptPinNumber = Gpio.IO26;
 			int dio0PinNumber = Gpio.IO26;
 #endif
 #if NETDUINO3_WIFI
@@ -79,6 +82,11 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 			try
 			{
+#if ESP32_WROOM_32_LORA_1_CHANNEL
+				Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
+				Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
+				Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+#endif
 				var settings = new SpiConnectionSettings(SpiBusId, chipSelectLine)
 				{
 					ClockFrequency = 1000000,
@@ -90,14 +98,10 @@ namespace devMobile.IoT.SX127xLoRaDevice
 				using (GpioController gpioController = new GpioController())
 				{
 #if ESP32_WROOM_32_LORA_1_CHANNEL
-					Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
-					Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
-					Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
-
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber);
+					sx127XDevice = new SX127XDevice(spiDevice, gpioController, dio0Pin:dio0PinNumber);
 #endif
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, dio0Pin:dio0PinNumber, resetPin:resetPinNumber, dio1Pin: dio1PinNumber, dio2Pin: dio2PinNumber);
+					sx127XDevice = new SX127XDevice(spiDevice, gpioController, dio0Pin:dio0PinNumber, dio1Pin: dio1PinNumber, dio2Pin: dio2PinNumber, resetPin: resetPinNumber);
 #endif
 
 					sx127XDevice.Initialise(Frequency
