@@ -143,12 +143,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 
 		public SX127XDevice(SpiDevice spiDevice, GpioController gpioController,
 			int dio0Pin,
-			int resetPin = 0, // Odd order so as not to break exisiting code
 			int dio1Pin = 0,
 			int dio2Pin = 0,
 			int dio3Pin = 0,
 			int dio4Pin = 0,
-			int dio5Pin = 0
+			int dio5Pin = 0,
+			int resetPin = 0
 			)
 		{
 			_gpioController = gpioController;
