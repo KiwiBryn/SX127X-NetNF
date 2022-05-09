@@ -38,7 +38,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 		private const double Frequency = 915000000.0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL
       private const int SpiBusId = 1;
-      private const int ledPinNumber = Gpio.IO17;
+      private const int ledPinNumber = Gpio.IO17;     // May 2022 LED won't flash _gpioController.Read always returns false see https://github.com/nanoframework/Home/issues/1036
 #endif
 #if NETDUINO3_WIFI
 		private const int SpiBusId = 2;
@@ -93,11 +93,16 @@ namespace devMobile.IoT.SX127x.RangeTester
 
 			try
 			{
+#if ESP32_WROOM_32_LORA_1_CHANNEL
+				Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
+				Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
+				Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
+#endif
 				var settings = new SpiConnectionSettings(SpiBusId, chipSelectLine)
 				{
 					ClockFrequency = 1000000,
 					Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-					//SharingMode = SpiSharingMode.Shared
+					SharingMode = SpiSharingMode.Shared
 				};
 
 				using (_gpioController = new GpioController())
@@ -105,15 +110,11 @@ namespace devMobile.IoT.SX127x.RangeTester
 				{
 
 #if ESP32_WROOM_32_LORA_1_CHANNEL
-					Configuration.SetPinFunction(Gpio.IO12, DeviceFunction.SPI1_MISO);
-					Configuration.SetPinFunction(Gpio.IO13, DeviceFunction.SPI1_MOSI);
-					Configuration.SetPinFunction(Gpio.IO14, DeviceFunction.SPI1_CLOCK);
-
-					sx127XDevice = new SX127XDevice(spiDevice, gpioController, interruptPinNumber);
+					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, dio0Pin: dio0PinNumber);
 #endif
 
 #if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
-					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, dio0Pin: dio0PinNumber, resetPinNumber);
+					_sx127XDevice = new SX127XDevice(spiDevice, _gpioController, dio0Pin: dio0PinNumber, resetPin:resetPinNumber);
 #endif
 
 					_sx127XDevice.Initialise(
