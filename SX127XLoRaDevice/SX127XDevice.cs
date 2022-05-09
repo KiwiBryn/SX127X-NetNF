@@ -136,7 +136,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		private readonly int _resetPin;
 		private readonly GpioController _gpioController = null;
 		private readonly RegisterManager _registerManager = null;
-		private readonly Object _regFifoLock = new object();
+		private readonly object _regFifoLock = new object();
 		private double _frequency = FrequencyDefault;
 		private bool _rxDoneIgnoreIfCrcMissing = true;
 		private bool _rxDoneIgnoreIfCrcInvalid = true;
@@ -450,7 +450,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			}
 
 			// RegModemConfig3
-			if ((lowDataRateOptimize != RegModemConfig3LowDataRateOptimise.Default) || (agcAutoOn !=  RegModemConfig3AgcAutoOn.Default))
+			if ((lowDataRateOptimize != RegModemConfig3LowDataRateOptimise.Default) || (agcAutoOn != RegModemConfig3AgcAutoOn.Default))
 			{
 				byte regModemConfig3Value = 0; // Buts 7-4 & 1-0 unused
 
@@ -670,7 +670,7 @@ namespace devMobile.IoT.SX127xLoRaDevice
 		{
 			OnValidHeaderEventArgs validHeaderArgs = new OnValidHeaderEventArgs();
 
-      OnValidHeader?.Invoke(this, validHeaderArgs);
+			OnValidHeader?.Invoke(this, validHeaderArgs);
 		}
 
 		private void ProcessTxDone(byte irqFlags)
@@ -731,12 +731,12 @@ namespace devMobile.IoT.SX127xLoRaDevice
 			SetMode(RegOpModeMode.Transmit);
 		}
 
-    public void ChannelActivityDetect()
+		public void ChannelActivityDetect()
 		{
 			_registerManager.WriteByte((byte)Registers.RegDioMapping1, (byte)RegDioMapping1.Dio1CadDetect);
 
 			SetMode(RegOpModeMode.ChannelActivityDetection);
-    }
+		}
 
 		public byte Random()
 		{
