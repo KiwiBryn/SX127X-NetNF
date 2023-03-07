@@ -14,8 +14,8 @@
 // limitations under the License.
 //
 //---------------------------------------------------------------------------------
-#define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
-//#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
+//#define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
+#define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --platform ESP32 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
 #define ARDUINO_LORA_DUPLEX
 namespace devMobile.IoT.SX127x.RangeTester
@@ -61,12 +61,12 @@ namespace devMobile.IoT.SX127x.RangeTester
 		private const byte AddressDestinationBroadcast = 0xff;
 
 		//private const byte AddressDestination = 0xaa;
-		private const byte AddressDestination = AddressDestinationBroadcast;
+		private const byte AddressDestination = 0xdd;
 
-		private const byte AddressLocal = 0xaa;
+        private const byte AddressLocal = 0x10;
 #endif
 
-		static void Main(string[] args)
+        static void Main(string[] args)
 		{
 			byte SendCount = 0;
 #if ESP32_WROOM_32_LORA_1_CHANNEL // No reset line for this device as it isn't connected on SX127X
@@ -102,7 +102,7 @@ namespace devMobile.IoT.SX127x.RangeTester
 				{
 					ClockFrequency = 1000000,
 					Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-					SharingMode = SpiSharingMode.Shared
+					//SharingMode = SpiSharingMode.Shared
 				};
 
 				using (_gpioController = new GpioController())
