@@ -47,7 +47,7 @@ namespace devMobile.IoT.SX127x.ReceiveInterrupt
          {
             ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-            SharingMode = SpiSharingMode.Shared
+            //SharingMode = SpiSharingMode.Shared
          };
 
          SX127XTransceiver = new SpiDevice(settings);
@@ -75,7 +75,7 @@ namespace devMobile.IoT.SX127x.ReceiveInterrupt
          {
             ClockFrequency = 1000000,
             Mode = SpiMode.Mode0,// From SemTech docs pg 80 CPOL=0, CPHA=0
-            SharingMode = SpiSharingMode.Shared,
+            //SharingMode = SpiSharingMode.Shared,
          };
 
          SX127XTransceiver = new SpiDevice(settings);
