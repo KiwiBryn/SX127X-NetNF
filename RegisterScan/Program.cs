@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 //---------------------------------------------------------------------------------
-//#define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 #define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
 namespace devMobile.IoT.SX127x.RegisterScan
@@ -84,9 +83,6 @@ namespace devMobile.IoT.SX127x.RegisterScan
 #if ESP32_WROOM_32_LORA_1_CHANNEL
       private const int SpiBusId = 1;
 #endif
-#if NETDUINO3_WIFI
-      private const int SpiBusId = 2;
-#endif
 #if ST_STM32F769I_DISCOVERY
       private const int SpiBusId = 2;
 #endif
@@ -95,12 +91,6 @@ namespace devMobile.IoT.SX127x.RegisterScan
       {
 #if ESP32_WROOM_32_LORA_1_CHANNEL
          int chipSelectLine = Gpio.IO16;
-#endif
-#if NETDUINO3_WIFI
-         // Arduino D10->PB10
-         int chipSelectLine = PinNumber('B', 10);
-         // Arduino D9->PE5
-         int resetPinNumber = PinNumber('E', 5);
 #endif
 #if ST_STM32F769I_DISCOVERY
          // Arduino D10->PA11
@@ -113,7 +103,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
 
          try
          {
-#if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ST_STM32F769I_DISCOVERY
             SX127XDevice sx127XDevice = new SX127XDevice(SpiBusId, chipSelectLine, resetPinNumber);
 #endif
 
@@ -146,7 +136,7 @@ namespace devMobile.IoT.SX127x.RegisterScan
          }
       }
 
-#if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ST_STM32F769I_DISCOVERY
       static int PinNumber(char port, byte pin)
       {
          if (port < 'A' || port > 'J')
