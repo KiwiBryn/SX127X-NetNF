@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 //---------------------------------------------------------------------------------
-//#define NETDUINO3_WIFI   // nanoff --target NETDUINO3_WIFI --update
 #define ESP32_WROOM_32_LORA_1_CHANNEL   // nanoff --target ESP32_PSRAM_REV0 --serialport COM7 --update
 //#define ST_STM32F769I_DISCOVERY      // nanoff --target ST_STM32F769I_DISCOVERY --update 
 
@@ -37,9 +36,6 @@ namespace devMobile.IoT.SX127x.ShieldSPI
 #if ESP32_WROOM_32_LORA_1_CHANNEL
       private const int SpiBusId = 1;
 #endif
-#if NETDUINO3_WIFI
-      private const int SpiBusId = 2;
-#endif
 #if ST_STM32F769I_DISCOVERY
       private const int SpiBusId = 2;
 #endif
@@ -52,13 +48,6 @@ namespace devMobile.IoT.SX127x.ShieldSPI
          int ledPinNumber = Gpio.IO17;
          int chipSelectLine = Gpio.IO16;
 #endif
-#if NETDUINO3_WIFI
-         int ledPinNumber = PinNumber('A', 10);
-         // Arduino D10->PB10
-         int chipSelectLine = PinNumber('B', 10);
-         // Arduino D9->PE5
-         int resetPinNumber = PinNumber('E', 5);
-#endif
 #if ST_STM32F769I_DISCOVERY
          int ledPinNumber  = PinNumber('J', 5);
          // Arduino D10->PA11
@@ -70,12 +59,12 @@ namespace devMobile.IoT.SX127x.ShieldSPI
 
          try
          {
-#if ESP32_WROOM_32_LORA_1_CHANNEL || NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ESP32_WROOM_32_LORA_1_CHANNEL || ST_STM32F769I_DISCOVERY
             // Setup the onboard LED
             gpioController.OpenPin(ledPinNumber, PinMode.Output);
 #endif
 
-#if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ST_STM32F769I_DISCOVERY
             // Setup the reset pin
             gpioController.OpenPin(resetPinNumber, PinMode.Output);
             gpioController.Write(resetPinNumber, PinValue.High);
@@ -107,7 +96,7 @@ namespace devMobile.IoT.SX127x.ShieldSPI
 
                   Debug.WriteLine(String.Format("Register 0x{0:x2} - Value 0X{1:x2}", RegVersion, readBuffer[1]));
 
-#if ESP32_WROOM_32_LORA_1_CHANNEL || NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ESP32_WROOM_32_LORA_1_CHANNEL || ST_STM32F769I_DISCOVERY
                   if ( gpioController.Read(ledPinNumber) == PinValue.High)
 						{
                      gpioController.Write(ledPinNumber, PinValue.Low);
@@ -127,7 +116,7 @@ namespace devMobile.IoT.SX127x.ShieldSPI
          }
       }
 
-#if NETDUINO3_WIFI || ST_STM32F769I_DISCOVERY
+#if ST_STM32F769I_DISCOVERY
       static int PinNumber(char port, byte pin)
       {
          if (port < 'A' || port > 'J')
